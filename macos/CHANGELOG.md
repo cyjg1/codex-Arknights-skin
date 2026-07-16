@@ -1,14 +1,16 @@
 # Changelog
 
-## Codex Arknights Skin — 2026-07-16
+## 1.1.3 — 2026-07-16
 
 - Bundled six operator themes: Amiya, Kal'tsit, Ch'en, Texas, Exusiai, and W.
 - Added manual operator selection, persistent automatic rotation, and Auto/Day/Night display controls.
 - Replaced the bottom operator rail with a compact upper-right control that stays collapsed by default.
 - Auto mode now follows local daytime hours, while wide task layouts reserve a dedicated right-side operator plane.
 - Fixed same-version hot reloads retaining stale CSS or control event handlers.
-- Removed conversation card fills so operator art passes behind the copy, with mode-specific text halos for contrast.
+- Removed conversation card fills so operator art passes behind the copy, with a full-canvas contrast gradient and crisp text.
+- Removed the native title-bar fill so task titles sit directly on the theme background.
 - Added a non-interactive Rhodes Island sidebar watermark, landship designation rail, and accent-synced status beacon.
+- Replaced README artwork-only previews with three sanitized real theme renders and removed stale gallery and promotional assets.
 - Added operator-specific palettes, codes, roles, taglines, and generated fan-theme artwork.
 - Kept single-image custom themes backward compatible with the new multi-operator payload.
 
@@ -51,11 +53,11 @@
 ### 视觉
 
 - 以原版暗色 portal CSS 为结构底，叠加 light 壳与更薄横幅遮罩，减轻「换图看不清」
-- 示例纯横幅：`docs/images/banner-arina-hashimoto-pure-no-ui.png`（无人机 UI 合成）
+- 使用纯横幅示例验证背景导入，不把预览合成图当作主题背景
 
 ### 说明
 
-- `docs/images/gallery/` 仅为效果预览，不要当 `theme` 背景导入
+- 旧版图库合成图仅用于效果预览，不要当 `theme` 背景导入
 
 ---
 

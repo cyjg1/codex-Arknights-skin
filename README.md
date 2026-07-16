@@ -17,6 +17,18 @@
 
 感谢原作者与贡献者。上游项目采用 MIT 许可；本仓库保留了相应许可与来源声明。Arknights 主题内容是本仓库的非官方二次创作，与上游作者无关。
 
+## 界面预览
+
+以下截图由仓库内的预览页直接加载正式主题 CSS 与角色资源后渲染，内容全部是演示数据，不包含任何真实任务、账号、目录或对话信息。
+
+<p align="center">
+  <img src="docs/screenshots/preview-night.png" alt="Codex Arknights Skin 夜间任务界面" width="100%">
+</p>
+<p align="center">
+  <img src="docs/screenshots/preview-day.png" alt="Codex Arknights Skin 白天首页" width="49%">
+  <img src="docs/screenshots/preview-controls.png" alt="Codex Arknights Skin 干员控制器" width="49%">
+</p>
+
 ## 干员主题
 
 | 干员 | 定位 | 主色 |
@@ -27,15 +39,6 @@
 | Texas / 德克萨斯 | Penguin Logistics · Vanguard | 石墨 / 暮紫 |
 | Exusiai / 能天使 | Penguin Logistics · Marksman | 日光 / 珊瑚红 |
 | W | Sarkaz Mercenary · Artillery | 碳黑 / 深红 |
-
-<p align="center">
-  <img src="macos/assets/operator-amiya.png" alt="Amiya theme artwork" width="49%">
-  <img src="macos/assets/operator-kaltsit.png" alt="Kal'tsit theme artwork" width="49%"><br>
-  <img src="macos/assets/operator-chen.png" alt="Ch'en theme artwork" width="49%">
-  <img src="macos/assets/operator-texas.png" alt="Texas theme artwork" width="49%"><br>
-  <img src="macos/assets/operator-exusiai.png" alt="Exusiai theme artwork" width="49%">
-  <img src="macos/assets/operator-w.png" alt="W theme artwork" width="49%">
-</p>
 
 ## 交互方式
 
@@ -48,7 +51,7 @@
 - 选择与显示偏好保存在本机，重新启动主题后继续生效。
 - 系统开启“减少动态效果”时，扫描线和进入动画会自动关闭。
 
-白天模式使用冷白纸面、深色文字和浅色柔边；夜间模式使用黑蓝战术终端、浅色文字和暗色柔边。任务正文不再铺设消息卡片，角色原画会直接透过文字区域，仅保留真正需要交互的输入框表面。宽屏任务页会把消息与输入框一起靠左，为角色主体留出空间；1120px 以下自动恢复原生居中全宽。
+白天模式使用冷白纸面和深色文字，夜间模式使用黑蓝战术终端和浅色文字。任务标题栏不再铺底，正文也不使用发光描边或消息卡片；清晰度由整幅背景的左侧渐变保证，角色原画仍会在右侧完整透出。宽屏任务页会把消息与输入框一起靠左，为角色主体留出空间；1120px 以下自动恢复原生居中全宽。
 
 ## 安装
 

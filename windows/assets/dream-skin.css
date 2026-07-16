@@ -171,7 +171,7 @@ html.codex-dream-skin main.main-surface {
   border-radius: 0 !important;
   box-shadow: none !important;
   background:
-    linear-gradient(90deg, rgba(7, 10, 12, .97) 0%, rgba(7, 10, 12, .90) 43%, rgba(7, 10, 12, .48) 68%, rgba(7, 10, 12, .12) 100%),
+    linear-gradient(90deg, rgba(7, 10, 12, .99) 0%, rgba(7, 10, 12, .95) 50%, rgba(7, 10, 12, .74) 66%, rgba(7, 10, 12, .30) 82%, rgba(7, 10, 12, .10) 100%),
     var(--ark-art) right center / auto 100% no-repeat !important;
 }
 
@@ -191,7 +191,7 @@ html.codex-dream-skin main.main-surface::after {
 html.codex-dream-skin main.main-surface > * { position: relative; z-index: 1; }
 
 html.codex-dream-skin main.main-surface:not(.ark-home-shell) {
-  --thread-content-max-width: min(650px, calc(100cqw - 230px)) !important;
+  --thread-content-max-width: min(600px, calc(100cqw - 250px)) !important;
 }
 
 html.codex-dream-skin main.main-surface:not(.ark-home-shell) [class*="max-w-(--thread-content-max-width)"] {
@@ -200,9 +200,11 @@ html.codex-dream-skin main.main-surface:not(.ark-home-shell) [class*="max-w-(--t
 }
 
 html.codex-dream-skin main.main-surface > header.app-header-tint {
-  background: rgba(8, 11, 13, .86) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, .07) !important;
-  backdrop-filter: blur(16px) saturate(112%) !important;
+  color: var(--ark-text) !important;
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
 html.codex-dream-skin [role="main"] {
@@ -528,7 +530,7 @@ html.codex-dream-skin[data-dream-shell="dark"] aside.app-shell-left-panel svg { 
   line-height: 1;
   font-weight: 860;
   letter-spacing: -.035em;
-  text-shadow: 0 3px 20px rgba(0,0,0,.72);
+  text-shadow: 0 1px 2px rgba(0,0,0,.72);
 }
 
 .ark-home > div:first-child > div:first-child > div:first-child::after {
@@ -570,7 +572,7 @@ html.codex-dream-skin[data-dream-shell="dark"] aside.app-shell-left-panel svg { 
   line-height: 1.45 !important;
   font-weight: 580 !important;
   text-align: left !important;
-  text-shadow: 0 2px 14px rgba(0,0,0,.7);
+  text-shadow: 0 1px 2px rgba(0,0,0,.72);
   opacity: 1 !important;
   pointer-events: auto !important;
 }
@@ -699,16 +701,16 @@ html.codex-dream-skin main.main-surface:not(.ark-home-shell) [data-message-autho
   background: transparent !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
-  -webkit-text-stroke: .16px rgba(0,0,0,.78);
-  text-shadow: 0 1px 2px rgba(0,0,0,.98), 0 0 10px rgba(0,0,0,.86), 0 0 24px rgba(0,0,0,.58);
+  -webkit-text-stroke: 0 transparent;
+  text-shadow: none !important;
 }
 
 html.codex-dream-skin main.main-surface:not(.ark-home-shell) [class*="max-w-(--thread-content-max-width)"][class*="px-toolbar"][class*="pb-8"] {
   background: transparent !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
-  -webkit-text-stroke: .16px rgba(0,0,0,.78);
-  text-shadow: 0 1px 2px rgba(0,0,0,.98), 0 0 10px rgba(0,0,0,.86), 0 0 24px rgba(0,0,0,.58);
+  -webkit-text-stroke: 0 transparent;
+  text-shadow: none !important;
 }
 
 html.codex-dream-skin main.main-surface:not(.ark-home-shell) [class*="bg-token-input-background/70"][class*="backdrop-blur-sm"] {
@@ -717,8 +719,8 @@ html.codex-dream-skin main.main-surface:not(.ark-home-shell) [class*="bg-token-i
   background: transparent !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
-  -webkit-text-stroke: .16px rgba(0,0,0,.78);
-  text-shadow: 0 1px 2px rgba(0,0,0,.98), 0 0 10px rgba(0,0,0,.86), 0 0 24px rgba(0,0,0,.58);
+  -webkit-text-stroke: 0 transparent;
+  text-shadow: none !important;
 }
 
 .ark-home div:has(> .horizontal-scroll-fade-mask .group\/project-selector) {
@@ -788,14 +790,16 @@ html.codex-dream-skin[data-dream-shell="light"] aside.app-shell-left-panel a:hov
 html.codex-dream-skin[data-dream-shell="light"] main.main-surface {
   color: var(--ark-text) !important;
   background:
-    linear-gradient(90deg, rgba(246,248,247,.94) 0%, rgba(246,248,247,.78) 42%, rgba(246,248,247,.32) 66%, rgba(246,248,247,.08) 100%),
+    linear-gradient(90deg, rgba(246,248,247,.98) 0%, rgba(246,248,247,.94) 50%, rgba(246,248,247,.76) 66%, rgba(246,248,247,.28) 82%, rgba(246,248,247,.08) 100%),
     var(--ark-art) right center / auto 100% no-repeat !important;
 }
 
 html.codex-dream-skin[data-dream-shell="light"] main.main-surface > header.app-header-tint {
   color: var(--ark-text) !important;
-  background: rgba(248, 249, 248, .88) !important;
-  border-bottom-color: rgba(23,26,27,.08) !important;
+  background: transparent !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
 html.codex-dream-skin[data-dream-shell="light"] .ark-brand-mark::before { background: #f6f8f7; }
@@ -819,7 +823,7 @@ html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-
   background: transparent !important;
   box-shadow: none !important;
   -webkit-text-stroke: 0 transparent;
-  text-shadow: 0 1px 1px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,.98), 0 0 18px rgba(255,255,255,.86);
+  text-shadow: none !important;
 }
 
 html.codex-dream-skin[data-dream-shell="light"] .ark-operator-panel button {
@@ -846,7 +850,7 @@ html.codex-dream-skin[data-dream-shell="light"] .ark-home > div:first-child > di
 html.codex-dream-skin[data-dream-shell="light"] .ark-home [data-feature="game-source"],
 html.codex-dream-skin[data-dream-shell="light"] .ark-home [data-feature="game-source"]::after {
   color: #f7fbfb !important;
-  text-shadow: 0 2px 14px rgba(0,0,0,.72) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.72) !important;
 }
 
 html.codex-dream-skin[data-dream-shell="light"] .ark-home [data-feature="game-source"]::before,
@@ -892,7 +896,7 @@ html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-
   background: transparent !important;
   box-shadow: none !important;
   -webkit-text-stroke: 0 transparent;
-  text-shadow: 0 1px 1px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,.98), 0 0 18px rgba(255,255,255,.86);
+  text-shadow: none !important;
 }
 
 html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-shell) [class*="bg-token-input-background/70"][class*="backdrop-blur-sm"],
@@ -902,14 +906,14 @@ html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-
   background: transparent !important;
   box-shadow: none !important;
   -webkit-text-stroke: 0 transparent;
-  text-shadow: 0 1px 1px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,.98), 0 0 18px rgba(255,255,255,.86);
+  text-shadow: none !important;
 }
 
 html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-shell) [class*="max-w-(--thread-content-max-width)"][class*="px-toolbar"][class*="pb-8"] :where(p, li, h1, h2, h3, h4, h5, h6, blockquote, strong, em),
 html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-shell) article :where(p, li, h1, h2, h3, h4, h5, h6, blockquote, strong, em) {
   color: #111719 !important;
   -webkit-text-stroke: 0 transparent;
-  text-shadow: 0 1px 1px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,.98), 0 0 18px rgba(255,255,255,.86);
+  text-shadow: none !important;
 }
 
 .ark-operator-transition .ark-scanline { animation: ark-operator-flash .32s ease-out both; }
@@ -946,7 +950,7 @@ html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-
 
 @media (min-width: 1121px) {
   html.codex-dream-skin main.main-surface:not(.ark-home-shell) {
-    background-position: center, calc(100% + 32px) center !important;
+    background-position: center, calc(100% + 48px) center !important;
   }
 }
 

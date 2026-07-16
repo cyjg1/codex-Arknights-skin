@@ -15,6 +15,18 @@ This project is developed from [Fei-Away/Codex-Dream-Skin](https://github.com/Fe
 
 Thank you to the original author and contributors. The upstream project is MIT-licensed, and this repository preserves its license and attribution. This unofficial Arknights theme is maintained independently and is not the responsibility of the upstream authors.
 
+## UI preview
+
+These screenshots are rendered by the repository preview page with the production theme CSS and operator assets. They contain demonstration data only—no real tasks, accounts, directories, or conversations.
+
+<p align="center">
+  <img src="docs/screenshots/preview-night.png" alt="Codex Arknights Skin night task view" width="100%">
+</p>
+<p align="center">
+  <img src="docs/screenshots/preview-day.png" alt="Codex Arknights Skin day home view" width="49%">
+  <img src="docs/screenshots/preview-controls.png" alt="Codex Arknights Skin operator controls" width="49%">
+</p>
+
 ## Included operators
 
 - Amiya — Rhodes Island Leader · Caster
@@ -34,7 +46,7 @@ Thank you to the original author and contributors. The upstream project is MIT-l
 - Preferences are stored locally and restored on the next themed launch.
 - Reduced-motion preferences disable scan and entrance animations.
 
-Day mode uses a cool paper-white shell with dark, light-haloed text. Night mode uses a black-blue tactical terminal with light, dark-haloed text. Conversation cards are removed so the operator artwork passes directly behind the copy; only the interactive composer keeps a solid surface. On wide task windows, the conversation and composer align left together to reserve space for the operator; below 1120px they return to the native centered full-width layout.
+Day mode uses a cool paper-white shell with dark text, while night mode uses a black-blue tactical terminal with light text. The task title has no backing strip, and conversation copy uses neither glow outlines nor message cards. A full-canvas left-side gradient provides contrast while the operator artwork remains visible on the right. On wide task windows, the conversation and composer align left together to reserve space for the operator; below 1120px they return to the native centered full-width layout.
 
 ## Install
 

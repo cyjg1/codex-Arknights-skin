@@ -45,7 +45,6 @@ node --check assets\renderer-inject.js
 - `scripts/config-utf8.ps1`: atomic UTF-8 configuration backup, selective restore, and explicit recovery.
 - `assets/dream-skin.css`: full visual layer.
 - `assets/renderer-inject.js`: idempotent DOM integration and cleanup.
-- `assets/dream-reference.png`: user-provided visual reference used only in cropped decorative regions.
 - `references/qa-inventory.md`: required functional and visual signoff coverage.
 - `references/runtime-notes.md`: troubleshooting and update behavior.
 - `tests/run-tests.ps1`: configuration, state, recovery, payload, and CDP validation regression checks.

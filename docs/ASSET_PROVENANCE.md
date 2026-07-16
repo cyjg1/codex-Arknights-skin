@@ -17,6 +17,10 @@ Shared production constraints: original 16:9 anime game key visual; character on
 
 The final assets are stored in both `macos/assets/` and `windows/assets/` so each platform package remains self-contained. The corresponding files are byte-identical across platforms.
 
+## README screenshots
+
+`docs/screenshots/preview-night.png`, `preview-day.png`, and `preview-controls.png` were captured from `docs/preview.html` at 1280×720. The preview loads the production CSS, theme manifest, and bundled operator assets, but uses repository-authored demonstration copy only. No live Codex task, account, directory, or conversation data appears in these images.
+
 ## Rights
 
 The images are provided only as part of this unofficial, non-commercial desktop theme. Generation for this repository does not transfer or claim ownership of Arknights character designs, names, or trademarks. Commercial use and redistribution may require permission from the relevant rights holders.

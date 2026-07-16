@@ -4,7 +4,7 @@
 
 - `macos/` is the primary product: shell launchers, `scripts/` runtime logic, `assets/` CSS/injection payloads, `menubar/` SwiftBar integration, and `tests/` checks.
 - `windows/` contains PowerShell launch/install/restore scripts, Node CDP injection, platform assets, references, and Windows-specific tests.
-- `docs/` holds platform notes, project history, promotional copy, and preview images. Files under `docs/images/gallery/` are composites, not theme backgrounds.
+- `docs/` holds platform notes, asset provenance, the reproducible preview page, and sanitized README screenshots.
 - `.github/` contains issue and pull-request templates. Keep platform behavior documented in `docs/platforms.md`.
 
 ## Build, Test, and Development Commands
