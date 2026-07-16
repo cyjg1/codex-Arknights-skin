@@ -33,7 +33,7 @@ Thank you to the original author and contributors. The upstream project is MIT-l
 - Preferences are stored locally and restored on the next themed launch.
 - Reduced-motion preferences disable scan and entrance animations.
 
-Day mode uses a cool paper-white shell, dark text, and a clear operator plane on the right. Night mode uses a black-blue tactical terminal, light text, and stronger operator lighting. On wide task windows, the conversation and composer align left together to reserve space for the operator; below 1120px they return to the native centered full-width layout. Native Codex navigation, tasks, project controls, and composer remain interactive in both modes.
+Day mode uses a cool paper-white shell with dark, light-haloed text. Night mode uses a black-blue tactical terminal with light, dark-haloed text. Conversation cards are removed so the operator artwork passes directly behind the copy; only the interactive composer keeps a solid surface. On wide task windows, the conversation and composer align left together to reserve space for the operator; below 1120px they return to the native centered full-width layout.
 
 ## Install
 
