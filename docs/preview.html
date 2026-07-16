@@ -4,11 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Codex Arknights Skin Preview</title>
-  <link rel="stylesheet" href="../windows/assets/dream-skin.css">
+  <link id="preview-theme-style" rel="stylesheet" href="../windows/assets/dream-skin.css">
   <style>
     * { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
     body { display: grid; grid-template-columns: 248px 1fr; padding-top: 0; }
+    body[data-skin="off"] { color: #202426; background: #f7f7f5; font-family: Inter, "Segoe UI", "PingFang SC", sans-serif; }
+    body[data-skin="off"] .app-shell-left-panel { border-right: 1px solid rgba(23,26,27,.10); background: #f1f2f1; }
+    body[data-skin="off"] .app-shell-left-panel nav button[aria-current="page"] { background: rgba(23,26,27,.06); }
+    body[data-skin="off"] .main-surface { background: #fbfbfa; }
+    body[data-skin="off"] .composer-surface-chrome { border: 1px solid rgba(23,26,27,.12); border-radius: 12px; background: #fff; box-shadow: 0 8px 24px rgba(23,26,27,.06); }
     button { font: inherit; }
     .app-shell-left-panel { position: relative; height: 100vh; padding: 22px 14px; }
     .app-shell-left-panel strong { display: block; margin: 4px 10px 24px; font-size: 14px; letter-spacing: .08em; }
@@ -42,6 +47,15 @@
     .preview-thread-content code { padding: 2px 5px; color: var(--ark-accent-alt); background: color-mix(in srgb, var(--ark-accent) 10%, transparent); }
     body[data-view="task"] .composer-wrap { left: calc(248px + 36px); right: auto; width: min(600px, calc(100vw - 534px)); }
     #codex-dream-skin-chrome { left: 248px; top: 0; width: calc(100% - 248px); height: 100%; }
+    #codex-dream-skin-restore {
+      position: fixed; right: 16px; top: 4px; z-index: 31; width: 44px; height: 44px; padding: 4px 0 3px;
+      display: grid; place-items: center; align-content: center; border: 1px solid rgba(23,26,27,.18); border-radius: 3px;
+      color: #171a1b; background: rgba(250,251,250,.96); box-shadow: 0 8px 22px rgba(28,38,40,.10); cursor: pointer;
+    }
+    #codex-dream-skin-restore[hidden] { display: none !important; }
+    #codex-dream-skin-restore span { color: #287e96; font: 800 17px/1 Inter, sans-serif; }
+    #codex-dream-skin-restore small { margin-top: -1px; font: 850 7px/1 Inter, sans-serif; letter-spacing: .12em; }
+    #codex-dream-skin-restore:focus-visible { outline: 2px solid #287e96; outline-offset: 2px; }
     @media (max-width: 920px) {
       body { grid-template-columns: 190px 1fr; }
       #codex-dream-skin-chrome { left: 190px; width: calc(100% - 190px); }
@@ -72,7 +86,7 @@
       <div id="home-view">
         <div>
           <div>
-            <div><div><div data-feature="game-source">选择项目 <button>codex-arknight-skin</button></div></div></div>
+            <div><div><div data-feature="game-source">选择项目 <button>codex-arknights-skin</button></div></div></div>
             <div>
               <div class="group/home-suggestions">
                 <button><span><span>01</span></span><span>审查当前更改并给出下一步</span></button>
@@ -84,7 +98,7 @@
           </div>
         </div>
         <div class="project-row">
-          <div class="horizontal-scroll-fade-mask"><div class="group/project-selector"><button>demo-workspace</button><button>codex-arknight-skin</button></div></div>
+          <div class="horizontal-scroll-fade-mask"><div class="group/project-selector"><button>demo-workspace</button><button>codex-arknights-skin</button></div></div>
         </div>
       </div>
       <div id="task-view" class="preview-task" hidden>
@@ -114,6 +128,9 @@
     <div class="ark-status"><i></i><span>P.R.T.S. LINK ONLINE</span></div>
     <div class="ark-quote"></div>
     <div class="ark-scanline" aria-hidden="true"></div>
+    <button type="button" class="ark-native-toggle" data-action="theme-off" aria-label="关闭明日方舟主题并恢复 Codex 原始界面">
+      <small>NATIVE</small><b>UI</b>
+    </button>
     <button type="button" class="ark-control-toggle" data-action="controls" aria-expanded="false" aria-label="Open operator controls">
       <small>OPERATOR</small><b class="ark-control-current"></b><i aria-hidden="true"></i>
     </button>
@@ -126,16 +143,21 @@
       <button type="button" class="ark-state-button" data-action="mode">NIGHT MODE</button>
     </div>
   </div>
+  <button id="codex-dream-skin-restore" type="button" aria-label="恢复 Codex Arknights Skin" title="恢复 Codex Arknights Skin" hidden>
+    <span aria-hidden="true">△</span><small aria-hidden="true">RI</small>
+  </button>
   <script>
     const root = document.documentElement;
     const params = new URLSearchParams(location.search);
     const requestedView = params.get("view") === "task" ? "task" : "home";
     const requestedMode = params.get("mode");
     const requestedOperator = params.get("operator");
+    const requestedSkin = params.get("skin") === "off" ? "off" : "on";
     let theme;
     let index = 0;
     let autoplay = params.get("autoplay") !== "false";
     let mode = requestedMode === "light" ? "light" : "dark";
+    let skinEnabled = requestedSkin === "on";
     let timer;
     const setVariable = (name, value) => root.style.setProperty(name, value);
     const render = () => {
@@ -187,6 +209,19 @@
       }
       render();
     };
+    const applySkinState = (enabled) => {
+      skinEnabled = Boolean(enabled);
+      const home = requestedView === "home";
+      document.body.dataset.skin = skinEnabled ? "on" : "off";
+      document.getElementById("preview-theme-style").disabled = !skinEnabled;
+      root.classList.toggle("codex-dream-skin", skinEnabled);
+      document.querySelector(".ark-sidebar-decor").hidden = !skinEnabled;
+      document.getElementById("codex-dream-skin-chrome").hidden = !skinEnabled;
+      document.getElementById("codex-dream-skin-restore").hidden = skinEnabled;
+      document.getElementById("preview-main").classList.toggle("ark-home-shell", skinEnabled && home);
+      document.getElementById("preview-content").className = skinEnabled && home ? "ark-home" : "";
+      if (skinEnabled) render();
+    };
     fetch("../windows/assets/theme.json").then((response) => response.json()).then((data) => {
       theme = data;
       const requestedIndex = theme.operators.findIndex((operator) => operator.id === requestedOperator);
@@ -214,12 +249,15 @@
       document.querySelector("[data-action='next']").addEventListener("click", () => select(index + 1, true));
       document.querySelector("[data-action='autoplay']").addEventListener("click", () => { autoplay = !autoplay; render(); });
       document.querySelector("[data-action='mode']").addEventListener("click", () => { mode = mode === "dark" ? "light" : "dark"; render(); });
+      document.querySelector("[data-action='theme-off']").addEventListener("click", () => applySkinState(false));
+      document.getElementById("codex-dream-skin-restore").addEventListener("click", () => applySkinState(true));
       document.querySelector("[data-action='controls']").addEventListener("click", (event) => {
         const chrome = document.getElementById("codex-dream-skin-chrome");
         const open = chrome.classList.toggle("ark-controls-open");
         event.currentTarget.setAttribute("aria-expanded", String(open));
       });
       render();
+      applySkinState(skinEnabled);
       if (params.get("controls") === "open") {
         document.getElementById("codex-dream-skin-chrome").classList.add("ark-controls-open");
         document.querySelector("[data-action='controls']").setAttribute("aria-expanded", "true");

@@ -368,9 +368,9 @@ html.codex-dream-skin[data-dream-shell="dark"] aside.app-shell-left-panel svg { 
 .ark-control-toggle {
   position: absolute;
   right: 16px;
-  top: 6px;
+  top: 4px;
   min-width: 154px;
-  min-height: 42px;
+  min-height: 44px;
   padding: 6px 38px 6px 12px;
   display: grid;
   align-content: center;
@@ -403,6 +403,31 @@ html.codex-dream-skin[data-dream-shell="dark"] aside.app-shell-left-panel svg { 
   transition: transform .2s ease;
 }
 .ark-controls-open .ark-control-toggle i { transform: translateY(4px) rotate(225deg); }
+
+.ark-native-toggle {
+  position: absolute;
+  right: 180px;
+  top: 4px;
+  width: 76px;
+  min-height: 44px;
+  padding: 6px 10px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  pointer-events: auto;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 2px;
+  color: var(--ark-text);
+  background: rgba(8, 11, 13, .72);
+  box-shadow: none;
+  backdrop-filter: blur(12px) saturate(110%);
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background-color .18s ease;
+}
+.ark-native-toggle small { color: var(--ark-muted); font: 700 7px/1 Inter, sans-serif; letter-spacing: .16em; }
+.ark-native-toggle b { margin-top: 3px; font: 820 10px/1 Inter, "Segoe UI", sans-serif; letter-spacing: .08em; }
+.ark-native-toggle:hover { color: var(--ark-accent-alt); border-color: var(--ark-accent); background: rgba(8, 11, 13, .9); }
+.ark-native-toggle:focus-visible { outline: 2px solid var(--ark-accent-alt); outline-offset: 2px; }
 
 .ark-operator-panel {
   position: absolute;
@@ -808,12 +833,14 @@ html.codex-dream-skin[data-dream-shell="light"] .ark-status { color: #171a1b; }
 html.codex-dream-skin[data-dream-shell="light"] .ark-telemetry { color: #fff; }
 
 html.codex-dream-skin[data-dream-shell="light"] .ark-control-toggle,
+html.codex-dream-skin[data-dream-shell="light"] .ark-native-toggle,
 html.codex-dream-skin[data-dream-shell="light"] .ark-operator-panel {
   color: #171a1b;
   border-color: color-mix(in srgb, var(--ark-accent) 45%, rgba(23,26,27,.14));
   background: rgba(248,249,248,.94);
   box-shadow: 0 18px 42px rgba(28,38,40,.15);
 }
+html.codex-dream-skin[data-dream-shell="light"] .ark-native-toggle { box-shadow: none; }
 
 html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-shell) [class*="max-w-(--thread-content-max-width)"][class*="px-toolbar"][class*="pb-8"] {
   --color-token-foreground: #111719 !important;
@@ -959,6 +986,7 @@ html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-
   .ark-brand { left: 50%; }
   .ark-brand small { display: none; }
   .ark-control-toggle { right: 10px; min-width: 132px; }
+  .ark-native-toggle { right: 152px; width: 68px; }
   .ark-operator-panel { left: auto; right: 10px; width: min(340px, calc(100% - 20px)); }
   html.codex-dream-skin main.main-surface:not(.ark-home-shell) {
     --thread-content-max-width: calc(100cqw - 28px) !important;

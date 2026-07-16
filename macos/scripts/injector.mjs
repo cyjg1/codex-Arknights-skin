@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.1.3";
+const SKIN_VERSION = "1.1.4";
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const MAX_ART_BYTES = 16 * 1024 * 1024;
 const MAX_OPERATOR_COUNT = 12;
@@ -421,25 +421,42 @@ async function removeFromSession(session) {
     window.__CODEX_DREAM_SKIN_DISABLED__ = true;
     const state = window.__CODEX_DREAM_SKIN_STATE__;
     if (state?.cleanup) return state.cleanup();
-    document.documentElement?.classList.remove('codex-dream-skin');
-    document.documentElement?.style.removeProperty('--ark-art');
-    document.documentElement?.style.removeProperty('--dream-skin-art');
+    const root = document.documentElement;
+    root?.classList.remove('codex-dream-skin', 'ark-operator-transition');
+    root?.removeAttribute('data-dream-shell');
+    root?.removeAttribute('data-ark-operator');
+    root?.removeAttribute('data-ark-mode-source');
+    for (const name of ['--ark-bg','--ark-panel','--ark-panel-2','--ark-text','--ark-muted','--ark-accent','--ark-accent-alt','--ark-secondary','--ark-highlight','--ark-line','--ark-art','--ark-name','--ark-code','--ark-role','--ark-tagline','--ark-quote','--dream-skin-art','--dream-skin-name','--dream-skin-tagline','--dream-skin-project-prefix','--dream-skin-project-label']) root?.style.removeProperty(name);
     document.querySelectorAll('.ark-home').forEach((node) => node.classList.remove('ark-home'));
     document.querySelectorAll('.ark-home-shell').forEach((node) => node.classList.remove('ark-home-shell'));
+    document.querySelectorAll('.ark-sidebar-decor').forEach((node) => node.remove());
     document.getElementById('codex-dream-skin-style')?.remove();
     document.getElementById('codex-dream-skin-chrome')?.remove();
+    document.getElementById('codex-dream-skin-restore')?.remove();
+    document.getElementById('codex-dream-skin-restore-style')?.remove();
+    try { localStorage.removeItem('codex-arknights.enabled'); } catch {}
     delete window.__CODEX_DREAM_SKIN_STATE__;
     return true;
   })()`);
 }
 
 async function verifyRemovedSession(session) {
-  return session.evaluate(`(() =>
-    !document.documentElement.classList.contains('codex-dream-skin') &&
-    !document.getElementById('codex-dream-skin-style') &&
-    !document.getElementById('codex-dream-skin-chrome') &&
-    !window.__CODEX_DREAM_SKIN_STATE__
-  )()`);
+  return session.evaluate(`(() => {
+    const root = document.documentElement;
+    const variables = ['--ark-bg','--ark-panel','--ark-panel-2','--ark-text','--ark-muted','--ark-accent','--ark-accent-alt','--ark-secondary','--ark-highlight','--ark-line','--ark-art','--ark-name','--ark-code','--ark-role','--ark-tagline','--ark-quote','--dream-skin-art','--dream-skin-name','--dream-skin-tagline','--dream-skin-project-prefix','--dream-skin-project-label'];
+    let enabledPreference = null;
+    try { enabledPreference = localStorage.getItem('codex-arknights.enabled'); } catch {}
+    return !root.classList.contains('codex-dream-skin') &&
+      !variables.some((name) => root.style.getPropertyValue(name)) &&
+      !root.hasAttribute('data-dream-shell') && !root.hasAttribute('data-ark-operator') &&
+      !root.hasAttribute('data-ark-mode-source') &&
+      !document.querySelector('.ark-home, .ark-home-shell, .ark-sidebar-decor') &&
+      !document.getElementById('codex-dream-skin-style') &&
+      !document.getElementById('codex-dream-skin-chrome') &&
+      !document.getElementById('codex-dream-skin-restore') &&
+      !document.getElementById('codex-dream-skin-restore-style') &&
+      enabledPreference === null && !window.__CODEX_DREAM_SKIN_STATE__;
+  })()`);
 }
 
 async function verifySession(session) {
@@ -466,13 +483,38 @@ async function verifySession(session) {
     const projectButton = box(home?.querySelector('.group\\\\/project-selector > button'));
     const composer = box(document.querySelector('.composer-surface-chrome'));
     const sidebar = box(document.querySelector('aside.app-shell-left-panel'));
+    const state = window.__CODEX_DREAM_SKIN_STATE__;
     const chrome = document.getElementById('codex-dream-skin-chrome');
+    const nativeToggle = chrome?.querySelector('.ark-native-toggle') ?? null;
+    const restore = document.getElementById('codex-dream-skin-restore');
+    const themeVariables = [
+      '--ark-bg', '--ark-panel', '--ark-panel-2', '--ark-text', '--ark-muted',
+      '--ark-accent', '--ark-accent-alt', '--ark-secondary', '--ark-highlight',
+      '--ark-line', '--ark-art', '--ark-name', '--ark-code', '--ark-role',
+      '--ark-tagline', '--ark-quote', '--dream-skin-art', '--dream-skin-name',
+      '--dream-skin-tagline', '--dream-skin-project-prefix', '--dream-skin-project-label',
+    ];
+    const themeResidue = themeVariables.some((name) => document.documentElement.style.getPropertyValue(name)) ||
+      document.documentElement.hasAttribute('data-dream-shell') ||
+      document.documentElement.hasAttribute('data-ark-operator') ||
+      document.documentElement.hasAttribute('data-ark-mode-source') ||
+      Boolean(document.querySelector('.ark-home, .ark-home-shell, .ark-sidebar-decor'));
     const result = {
-      installed: document.documentElement.classList.contains('codex-dream-skin'),
-      version: window.__CODEX_DREAM_SKIN_STATE__?.version ?? null,
+      installed: Boolean(state),
+      active: document.documentElement.classList.contains('codex-dream-skin'),
+      enabled: state?.enabled ?? null,
+      version: state?.version ?? null,
       stylePresent: Boolean(document.getElementById('codex-dream-skin-style')),
       chromePresent: Boolean(chrome),
       chromePointerEvents: getComputedStyle(chrome || document.body).pointerEvents,
+      nativeTogglePresent: Boolean(nativeToggle),
+      nativeTogglePointerEvents: nativeToggle ? getComputedStyle(nativeToggle).pointerEvents : null,
+      nativeToggle: box(nativeToggle),
+      restorePresent: Boolean(restore),
+      restoreStylePresent: Boolean(document.getElementById('codex-dream-skin-restore-style')),
+      restorePointerEvents: restore ? getComputedStyle(restore).pointerEvents : null,
+      restore: box(restore),
+      themeResidue,
       homeRoute: Boolean(homeRoute),
       homePresent: Boolean(home),
       hero,
@@ -487,15 +529,28 @@ async function verifySession(session) {
         y: document.documentElement.scrollHeight > document.documentElement.clientHeight,
       },
     };
-    const basePass = result.installed && result.version === ${JSON.stringify(SKIN_VERSION)} &&
-      result.stylePresent && result.chromePresent && result.chromePointerEvents === 'none' &&
-      Boolean(result.composer?.visible) && Boolean(result.sidebar?.visible) && !result.documentOverflow.x;
+    const shellPass = Boolean(result.composer?.visible) && Boolean(result.sidebar?.visible) && !result.documentOverflow.x;
+    const activePass = result.enabled === true && result.active && result.stylePresent && result.chromePresent &&
+      result.chromePointerEvents === 'none' && result.nativeTogglePresent &&
+      result.nativeTogglePointerEvents !== 'none' && result.nativeToggle?.visible &&
+      result.nativeToggle.width >= 44 && result.nativeToggle.height >= 44 &&
+      result.nativeToggle.x < result.viewport.width && result.nativeToggle.x + result.nativeToggle.width > 0 &&
+      result.nativeToggle.y < result.viewport.height && result.nativeToggle.y + result.nativeToggle.height > 0 &&
+      !result.restorePresent && !result.restoreStylePresent;
+    const nativePass = result.enabled === false && !result.active && !result.stylePresent && !result.chromePresent &&
+      !result.nativeTogglePresent && result.restorePresent && result.restoreStylePresent && !result.themeResidue &&
+      result.restorePointerEvents !== 'none' && result.restore?.visible &&
+      result.restore.width >= 44 && result.restore.height >= 44 &&
+      result.restore.x < result.viewport.width && result.restore.x + result.restore.width > 0 &&
+      result.restore.y < result.viewport.height && result.restore.y + result.restore.height > 0;
+    const basePass = result.installed && result.version === ${JSON.stringify(SKIN_VERSION)} && shellPass &&
+      (activePass || nativePass);
     // Project selector markup varies across Codex builds — soft requirement.
     const homePass = !result.homeRoute || (
       result.homePresent && result.hero?.visible && result.hero.width >= 280 && result.hero.height >= 120 &&
       result.visibleCardCount >= 1 && result.visibleCardCount <= 6
     );
-    result.pass = Boolean(basePass && homePass);
+    result.pass = Boolean(basePass && (!result.enabled || homePass));
     result.softNotes = {
       projectButtonOptional: !result.projectButton?.visible,
     };

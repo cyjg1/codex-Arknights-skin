@@ -6,7 +6,7 @@
 
 <p align="center">
   给 Codex 桌面端装上一套会随干员、时间与任务状态变化的《明日方舟》主题。<br>
-  六位干员 · 手动选择 · 自动轮播 · 白天/夜间自适应 · Windows / macOS
+  六位干员 · 手动选择 · 自动轮播 · 白天/夜间自适应 · 一键原生界面 · Windows / macOS
 </p>
 
 > 《明日方舟》的官方英文名是 **Arknights**，因此项目标题使用 **Codex Arknights Skin**。
@@ -22,11 +22,11 @@
 以下截图由仓库内的预览页直接加载正式主题 CSS 与角色资源后渲染，内容全部是演示数据，不包含任何真实任务、账号、目录或对话信息。
 
 <p align="center">
-  <img src="docs/screenshots/preview-night.png" alt="Codex Arknights Skin 夜间任务界面" width="100%">
+  <img src="docs/screenshots/preview-night.jpg" alt="Codex Arknights Skin 夜间任务界面" width="100%">
 </p>
 <p align="center">
-  <img src="docs/screenshots/preview-day.png" alt="Codex Arknights Skin 白天首页" width="49%">
-  <img src="docs/screenshots/preview-controls.png" alt="Codex Arknights Skin 干员控制器" width="49%">
+  <img src="docs/screenshots/preview-day.jpg" alt="Codex Arknights Skin 白天首页" width="49%">
+  <img src="docs/screenshots/preview-controls.jpg" alt="Codex Arknights Skin 干员与原生界面切换控制器" width="49%">
 </p>
 
 ## 干员主题
@@ -47,9 +47,13 @@
 - 点击干员名称：立即切换背景、强调色、代号、职业与文案，并自动暂停轮播。
 - `ROTATE ON / OFF`：开启或关闭每 12 秒一次的自动轮播。
 - `AUTO / DAY / NIGHT MODE`：自动模式按本地时间在 07:00–18:00 使用白天显示，其余时间使用夜间显示；也可手动强制白天或夜间。
+- `NATIVE UI`：一键移除主题背景、样式、侧栏装饰与控制器，回到 Codex 原生界面；右上角只保留一个 44×44 的 `△ RI` 恢复按钮。
+- `△ RI`：一键切回完整 Codex Arknights Skin；干员、轮播与白天/夜间显示偏好不会被清空。
 - 左侧栏包含低对比罗德岛三角徽记、`RI // 001` 舰船刻度与状态灯；装饰会跟随当前干员强调色变化，不拦截任何操作。
-- 选择与显示偏好保存在本机，重新启动主题后继续生效。
+- 干员、轮播、显示模式与主题启用状态均保存在本机，重新启动后继续生效。
 - 系统开启“减少动态效果”时，扫描线和进入动画会自动关闭。
+
+> `NATIVE UI` 只是视觉切换，不会卸载主题或关闭本机 CDP。需要完全恢复官方配置并结束主题运行态时，请使用下方 Restore 命令。
 
 白天模式使用冷白纸面和深色文字，夜间模式使用黑蓝战术终端和浅色文字。任务标题栏不再铺底，正文也不使用发光描边或消息卡片；清晰度由整幅背景的左侧渐变保证，角色原画仍会在右侧完整透出。宽屏任务页会把消息与输入框一起靠左，为角色主体留出空间；1120px 以下自动恢复原生居中全宽。
 

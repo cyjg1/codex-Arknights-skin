@@ -3,6 +3,8 @@
   const DISABLED_KEY = "__CODEX_DREAM_SKIN_DISABLED__";
   const STYLE_ID = "codex-dream-skin-style";
   const CHROME_ID = "codex-dream-skin-chrome";
+  const RESTORE_ID = "codex-dream-skin-restore";
+  const RESTORE_STYLE_ID = "codex-dream-skin-restore-style";
   const SHELL_ATTR = "data-dream-shell";
   const OPERATOR_ATTR = "data-ark-operator";
   const MODE_SOURCE_ATTR = "data-ark-mode-source";
@@ -14,6 +16,7 @@
     operator: "codex-arknights.operator",
     autoplay: "codex-arknights.autoplay",
     mode: "codex-arknights.mode",
+    enabled: "codex-arknights.enabled",
   };
   const THEME_VARIABLES = [
     "--ark-bg", "--ark-panel", "--ark-panel-2", "--ark-text", "--ark-muted",
@@ -54,9 +57,12 @@
   if (previous?.mediaHandler && previous?.mediaQuery) {
     try { previous.mediaQuery.removeEventListener("change", previous.mediaHandler); } catch {}
   }
+  if (previous?.storageHandler) window.removeEventListener?.("storage", previous.storageHandler);
   for (const url of previous?.artUrls || []) URL.revokeObjectURL(url);
   if (previous?.artUrl) URL.revokeObjectURL(previous.artUrl);
   document.getElementById(CHROME_ID)?.remove();
+  document.getElementById(RESTORE_ID)?.remove();
+  document.getElementById(RESTORE_STYLE_ID)?.remove();
   window[DISABLED_KEY] = false;
 
   const dataUrlToObjectUrl = (dataUrl) => {
@@ -76,11 +82,15 @@
   const writeStorage = (key, value) => {
     try { window.localStorage?.setItem(key, String(value)); } catch {}
   };
+  const removeStorage = (key) => {
+    try { window.localStorage?.removeItem(key); } catch {}
+  };
 
   let operatorIndex = Math.max(0, operators.findIndex((item) => item.id === readStorage(STORAGE.operator)));
   let autoplay = readStorage(STORAGE.autoplay) !== "false";
   let modePreference = ["auto", "light", "dark"].includes(readStorage(STORAGE.mode))
     ? readStorage(STORAGE.mode) : "auto";
+  let themeEnabled = readStorage(STORAGE.enabled) !== "false";
   let controlsOpen = false;
   let nextSlideAt = Date.now() + CAROUSEL_INTERVAL;
 
@@ -90,7 +100,7 @@
   };
   const activeShellMode = () => modePreference === "auto" ? localTimeMode() : modePreference;
 
-  const clearSkinDom = () => {
+  const clearSkinDom = ({ preserveRestore = false } = {}) => {
     const root = document.documentElement;
     root?.classList.remove("codex-dream-skin", "ark-operator-transition");
     root?.removeAttribute?.(SHELL_ATTR);
@@ -102,6 +112,119 @@
     document.querySelectorAll?.(".ark-sidebar-decor").forEach((node) => node.remove());
     document.getElementById(STYLE_ID)?.remove();
     document.getElementById(CHROME_ID)?.remove();
+    if (!preserveRestore) {
+      document.getElementById(RESTORE_ID)?.remove();
+      document.getElementById(RESTORE_STYLE_ID)?.remove();
+    }
+  };
+
+  const detectNativeShell = (shellMain) => {
+    for (const node of [shellMain, document.body, document.documentElement]) {
+      let value = "";
+      try { value = window.getComputedStyle?.(node)?.backgroundColor || ""; } catch {}
+      const match = /^rgba?\(\s*(\d+)[, ]+\s*(\d+)[, ]+\s*(\d+)(?:\s*[,/]\s*([\d.]+))?/i.exec(value);
+      if (!match || (match[4] !== undefined && Number(match[4]) < .12)) continue;
+      const luminance = .2126 * Number(match[1]) + .7152 * Number(match[2]) + .0722 * Number(match[3]);
+      return luminance >= 150 ? "light" : "dark";
+    }
+    try { return window.matchMedia?.("(prefers-color-scheme: light)")?.matches ? "light" : "dark"; } catch {}
+    return "dark";
+  };
+
+  const ensureRestoreButton = (shellMain) => {
+    const root = document.documentElement;
+    let style = document.getElementById(RESTORE_STYLE_ID);
+    if (!style) {
+      style = document.createElement("style");
+      style.id = RESTORE_STYLE_ID;
+      (document.head || root).appendChild(style);
+    }
+    const restoreStyleText = `
+      #${RESTORE_ID} {
+        position: fixed;
+        z-index: 31;
+        right: 16px;
+        top: 4px;
+        width: 44px;
+        height: 44px;
+        padding: 4px 0 3px;
+        display: grid;
+        place-items: center;
+        align-content: center;
+        border: 1px solid rgba(128, 138, 142, .42);
+        border-radius: 3px;
+        color: #eef2f3;
+        background: rgba(18, 22, 24, .92);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, .18);
+        font-family: Inter, "Segoe UI", sans-serif;
+        cursor: pointer;
+        transition: transform .16s ease, border-color .16s ease, background-color .16s ease;
+      }
+      #${RESTORE_ID}[data-native-shell="light"] {
+        color: #171a1b;
+        border-color: rgba(23, 26, 27, .18);
+        background: rgba(250, 251, 250, .96);
+        box-shadow: 0 8px 22px rgba(28, 38, 40, .10);
+      }
+      #${RESTORE_ID} span {
+        color: #64c7df;
+        font: 800 17px/1 Inter, sans-serif;
+      }
+      #${RESTORE_ID} small {
+        margin-top: -1px;
+        color: currentColor;
+        font: 850 7px/1 Inter, sans-serif;
+        letter-spacing: .12em;
+      }
+      #${RESTORE_ID}:hover {
+        border-color: #64c7df;
+        background: rgba(24, 30, 33, .97);
+        transform: translateY(-1px);
+      }
+      #${RESTORE_ID}[data-native-shell="light"]:hover {
+        background: #fff;
+      }
+      #${RESTORE_ID}:focus-visible {
+        outline: 2px solid #64c7df;
+        outline-offset: 2px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #${RESTORE_ID} { transition: none; }
+      }
+    `;
+    if (style.textContent !== restoreStyleText) style.textContent = restoreStyleText;
+    let button = document.getElementById(RESTORE_ID);
+    if (button?.parentElement !== document.body) {
+      button?.remove();
+      button = document.createElement("button");
+      button.id = RESTORE_ID;
+      button.type = "button";
+      button.innerHTML = '<span aria-hidden="true">△</span><small aria-hidden="true">RI</small>';
+      button.title = "恢复 Codex Arknights Skin";
+      button.setAttribute("aria-label", "恢复 Codex Arknights Skin");
+      button.addEventListener?.("click", () => setThemeEnabled(true));
+      document.body.appendChild(button);
+    }
+    const nativeShell = detectNativeShell(shellMain);
+    if (button.dataset.nativeShell !== nativeShell) button.dataset.nativeShell = nativeShell;
+    const shellBox = shellMain?.getBoundingClientRect?.();
+    if (shellBox) {
+      const left = `${Math.max(8, Math.round(shellBox.left + shellBox.width - 60))}px`;
+      const top = `${Math.max(4, Math.round(shellBox.top + 4))}px`;
+      if (button.style.left !== left) button.style.left = left;
+      if (button.style.right !== "auto") button.style.right = "auto";
+      if (button.style.top !== top) button.style.top = top;
+    } else {
+      if (button.style.left) button.style.left = "";
+      if (button.style.right !== "16px") button.style.right = "16px";
+      if (button.style.top !== "4px") button.style.top = "4px";
+    }
+    return button;
+  };
+
+  const clearRestoreButton = () => {
+    document.getElementById(RESTORE_ID)?.remove();
+    document.getElementById(RESTORE_STYLE_ID)?.remove();
   };
 
   const applyOperator = (root, shell) => {
@@ -161,6 +284,9 @@
       <div class="ark-status"><i></i><span>P.R.T.S. LINK ONLINE</span></div>
       <div class="ark-quote"></div>
       <div class="ark-scanline" aria-hidden="true"></div>
+      <button type="button" class="ark-native-toggle" data-ark-action="theme-off" aria-label="关闭明日方舟主题并恢复 Codex 原始界面">
+        <small>NATIVE</small><b>UI</b>
+      </button>
       <button type="button" class="ark-control-toggle" data-ark-action="controls" aria-expanded="false" aria-label="Open operator controls">
         <small>OPERATOR</small><b class="ark-control-current"></b><i aria-hidden="true"></i>
       </button>
@@ -213,6 +339,7 @@
         writeStorage(STORAGE.mode, modePreference);
         ensure();
       }
+      if (action === "theme-off") setThemeEnabled(false);
     });
   };
 
@@ -269,11 +396,25 @@
     if (window[DISABLED_KEY]) return;
     const root = document.documentElement;
     const shellMain = document.querySelector?.("main.main-surface");
-    const shellSidebar = document.querySelector?.("aside.app-shell-left-panel");
-    if (!root || !document.body || !shellMain || !shellSidebar) {
+    if (!root || !document.body) {
       clearSkinDom();
       return;
     }
+    if (!themeEnabled) {
+      if (!shellMain && !document.getElementById(RESTORE_ID)) {
+        clearSkinDom();
+        return;
+      }
+      clearSkinDom({ preserveRestore: true });
+      ensureRestoreButton(shellMain);
+      return;
+    }
+    const shellSidebar = document.querySelector?.("aside.app-shell-left-panel");
+    if (!shellMain || !shellSidebar) {
+      clearSkinDom();
+      return;
+    }
+    clearRestoreButton();
     root.classList.add("codex-dream-skin");
     const shell = activeShellMode();
     applyOperator(root, shell);
@@ -319,6 +460,26 @@
     syncChrome(chrome);
   };
 
+  function setThemeEnabled(nextEnabled) {
+    const enabled = Boolean(nextEnabled);
+    if (themeEnabled === enabled) {
+      ensure();
+      return themeEnabled;
+    }
+    themeEnabled = enabled;
+    controlsOpen = false;
+    nextSlideAt = Date.now() + CAROUSEL_INTERVAL;
+    writeStorage(STORAGE.enabled, themeEnabled);
+    ensure();
+    setTimeout(() => {
+      const target = themeEnabled
+        ? document.querySelector?.("#codex-dream-skin-chrome .ark-control-toggle")
+        : document.getElementById(RESTORE_ID);
+      target?.focus?.();
+    }, 0);
+    return themeEnabled;
+  }
+
   function selectOperator(nextIndex, manual = false) {
     const normalized = ((Number(nextIndex) % operators.length) + operators.length) % operators.length;
     if (manual) {
@@ -348,6 +509,8 @@
     if (state?.mediaHandler && state?.mediaQuery) {
       try { state.mediaQuery.removeEventListener("change", state.mediaHandler); } catch {}
     }
+    if (state?.storageHandler) window.removeEventListener?.("storage", state.storageHandler);
+    removeStorage(STORAGE.enabled);
     for (const url of state?.artUrls || []) URL.revokeObjectURL(url);
     delete window[STATE_KEY];
     return true;
@@ -370,7 +533,7 @@
   });
   const ensureTimer = setInterval(ensure, 4000);
   const carouselTimer = setInterval(() => {
-    if (!autoplay || document.visibilityState === "hidden" || Date.now() < nextSlideAt) return;
+    if (!themeEnabled || !autoplay || document.visibilityState === "hidden" || Date.now() < nextSlideAt) return;
     selectOperator(operatorIndex + 1, false);
   }, 1000);
   const resizeHandler = scheduleEnsure;
@@ -382,11 +545,20 @@
     mediaHandler = scheduleEnsure;
     mediaQuery.addEventListener("change", mediaHandler);
   } catch {}
+  const storageHandler = (event) => {
+    if (event?.key !== STORAGE.enabled) return;
+    themeEnabled = event.newValue !== "false";
+    controlsOpen = false;
+    nextSlideAt = Date.now() + CAROUSEL_INTERVAL;
+    ensure();
+  };
+  window.addEventListener?.("storage", storageHandler);
 
   window[STATE_KEY] = {
     ensure,
     cleanup,
     selectOperator,
+    setEnabled: setThemeEnabled,
     observer,
     ensureTimer,
     carouselTimer,
@@ -394,12 +566,14 @@
     resizeHandler,
     mediaQuery,
     mediaHandler,
+    storageHandler,
     artUrls,
     version: VERSION,
     themeId: THEME.id || "codex-arknights-skin",
     get operator() { return operators[operatorIndex]; },
     get autoplay() { return autoplay; },
     get mode() { return modePreference; },
+    get enabled() { return themeEnabled; },
   };
   ensure();
   return {
@@ -408,6 +582,7 @@
     themeId: THEME.id || "codex-arknights-skin",
     operator: operators[operatorIndex].id,
     autoplay,
+    enabled: themeEnabled,
     shell: activeShellMode(),
   };
 })(__DREAM_SKIN_CSS_JSON__, __DREAM_SKIN_ARTS_JSON__, __DREAM_SKIN_THEME_JSON__)

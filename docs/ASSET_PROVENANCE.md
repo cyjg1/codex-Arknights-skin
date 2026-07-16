@@ -19,7 +19,7 @@ The final assets are stored in both `macos/assets/` and `windows/assets/` so eac
 
 ## README screenshots
 
-`docs/screenshots/preview-night.png`, `preview-day.png`, and `preview-controls.png` were captured from `docs/preview.html` at 1280×720. The preview loads the production CSS, theme manifest, and bundled operator assets, but uses repository-authored demonstration copy only. No live Codex task, account, directory, or conversation data appears in these images.
+`docs/screenshots/preview-night.jpg`, `preview-day.jpg`, and `preview-controls.jpg` were captured from `docs/preview.html` at 1280×720. The preview loads the production CSS, theme manifest, and bundled operator assets, but uses repository-authored demonstration copy only. No live Codex task, account, directory, or conversation data appears in these images.
 
 ## Rights
 

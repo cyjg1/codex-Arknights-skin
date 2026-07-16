@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.4 — 2026-07-16
+
+- Added a one-click `NATIVE UI` control that removes the themed background, styling, sidebar decoration, and operator controls to restore the native Codex interface.
+- Native mode keeps only an accessible 44×44 `△ RI` restore control, with automatic light/dark contrast.
+- Persisted the enabled state, paused rotation while native mode is active, and preserved operator, rotation, and display preferences across the round trip.
+- Updated verification and renderer regression coverage for active, native, and round-trip states.
+
 ## 1.1.3 — 2026-07-16
 
 - Bundled six operator themes: Amiya, Kal'tsit, Ch'en, Texas, Exusiai, and W.

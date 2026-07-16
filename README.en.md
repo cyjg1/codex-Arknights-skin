@@ -6,7 +6,7 @@
 
 <p align="center">
   An Arknights-inspired Codex desktop theme that changes with the selected operator, time of day, and task context.<br>
-  Six operators · Manual selection · Auto rotation · Day/night modes · Windows / macOS
+  Six operators · Manual selection · Auto rotation · Day/night modes · One-click native UI · Windows / macOS
 </p>
 
 ## Built on Codex Dream Skin
@@ -20,11 +20,11 @@ Thank you to the original author and contributors. The upstream project is MIT-l
 These screenshots are rendered by the repository preview page with the production theme CSS and operator assets. They contain demonstration data only—no real tasks, accounts, directories, or conversations.
 
 <p align="center">
-  <img src="docs/screenshots/preview-night.png" alt="Codex Arknights Skin night task view" width="100%">
+  <img src="docs/screenshots/preview-night.jpg" alt="Codex Arknights Skin night task view" width="100%">
 </p>
 <p align="center">
-  <img src="docs/screenshots/preview-day.png" alt="Codex Arknights Skin day home view" width="49%">
-  <img src="docs/screenshots/preview-controls.png" alt="Codex Arknights Skin operator controls" width="49%">
+  <img src="docs/screenshots/preview-day.jpg" alt="Codex Arknights Skin day home view" width="49%">
+  <img src="docs/screenshots/preview-controls.jpg" alt="Codex Arknights Skin operator and native UI controls" width="49%">
 </p>
 
 ## Included operators
@@ -42,9 +42,13 @@ These screenshots are rendered by the repository preview page with the productio
 - Select an operator to switch the artwork, accent palette, code, role, and copy. Manual selection pauses rotation.
 - `ROTATE ON / OFF` controls the 12-second automatic carousel.
 - `AUTO / DAY / NIGHT MODE` uses the light shell from 07:00 to 18:00 local time and the dark shell outside that window, or forces either shell manually.
+- `NATIVE UI` removes the themed background, styling, sidebar decoration, and controls in one click, returning to the native Codex interface with only a 44×44 `△ RI` restore control in the upper-right corner.
+- `△ RI` restores the full Codex Arknights Skin in one click without clearing operator, rotation, or day/night preferences.
 - The sidebar carries a low-contrast Rhodes Island emblem, `RI // 001` landship rail, and status beacon that follow the active operator accent without intercepting input.
-- Preferences are stored locally and restored on the next themed launch.
+- Operator, rotation, display-mode, and theme-enabled preferences are stored locally and survive restarts.
 - Reduced-motion preferences disable scan and entrance animations.
+
+> `NATIVE UI` is a visual switch only; it does not uninstall the theme or stop local CDP. Use Restore below to fully return to the official configuration and end the themed runtime.
 
 Day mode uses a cool paper-white shell with dark text, while night mode uses a black-blue tactical terminal with light text. The task title has no backing strip, and conversation copy uses neither glow outlines nor message cards. A full-canvas left-side gradient provides contrast while the operator artwork remains visible on the right. On wide task windows, the conversation and composer align left together to reserve space for the operator; below 1120px they return to the native centered full-width layout.
 
