@@ -56,6 +56,7 @@
   }
   for (const url of previous?.artUrls || []) URL.revokeObjectURL(url);
   if (previous?.artUrl) URL.revokeObjectURL(previous.artUrl);
+  document.getElementById(CHROME_ID)?.remove();
   window[DISABLED_KEY] = false;
 
   const dataUrlToObjectUrl = (dataUrl) => {
@@ -80,30 +81,14 @@
   let autoplay = readStorage(STORAGE.autoplay) !== "false";
   let modePreference = ["auto", "light", "dark"].includes(readStorage(STORAGE.mode))
     ? readStorage(STORAGE.mode) : "auto";
+  let controlsOpen = false;
   let nextSlideAt = Date.now() + CAROUSEL_INTERVAL;
 
-  const detectHostShellMode = () => {
-    const root = document.documentElement;
-    const body = document.body;
-    const classes = `${root?.className || ""} ${body?.className || ""}`.toLowerCase();
-    if (/\b(dark|theme-dark|appearance-dark)\b/.test(classes)) return "dark";
-    if (/\b(light|theme-light|appearance-light)\b/.test(classes)) return "light";
-    const dataTheme = [
-      root?.getAttribute?.("data-theme"), root?.getAttribute?.("data-appearance"),
-      root?.getAttribute?.("data-color-mode"), body?.getAttribute?.("data-theme"),
-      body?.getAttribute?.("data-appearance"),
-    ].filter(Boolean).join(" ").toLowerCase();
-    if (dataTheme.includes("dark")) return "dark";
-    if (dataTheme.includes("light")) return "light";
-    const checked = document.querySelector?.('input[name="appearance-theme"]:checked');
-    const label = `${checked?.getAttribute?.("aria-label") || ""} ${checked?.value || ""}`.toLowerCase();
-    if (label.includes("dark") || label.includes("深色") || label.includes("暗色")) return "dark";
-    if (label.includes("light") || label.includes("浅色") || label.includes("亮色")) return "light";
-    try { return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch {}
+  const localTimeMode = () => {
     const hour = new Date().getHours();
-    return hour >= 7 && hour < 19 ? "light" : "dark";
+    return hour >= 7 && hour < 18 ? "light" : "dark";
   };
-  const activeShellMode = () => modePreference === "auto" ? detectHostShellMode() : modePreference;
+  const activeShellMode = () => modePreference === "auto" ? localTimeMode() : modePreference;
 
   const clearSkinDom = () => {
     const root = document.documentElement;
@@ -175,6 +160,9 @@
       <div class="ark-status"><i></i><span>P.R.T.S. LINK ONLINE</span></div>
       <div class="ark-quote"></div>
       <div class="ark-scanline" aria-hidden="true"></div>
+      <button type="button" class="ark-control-toggle" data-ark-action="controls" aria-expanded="false" aria-label="Open operator controls">
+        <small>OPERATOR</small><b class="ark-control-current"></b><i aria-hidden="true"></i>
+      </button>
       <div class="ark-operator-panel" aria-label="Arknights operator and appearance controls">
         <button type="button" class="ark-step" data-ark-action="previous" aria-label="Previous operator">‹</button>
         <div class="ark-operator-rail" role="group" aria-label="Choose operator"></div>
@@ -200,9 +188,16 @@
       if (!button || !chrome.contains(button)) return;
       if (button.dataset.operatorIndex !== undefined) {
         selectOperator(Number(button.dataset.operatorIndex), true);
+        controlsOpen = false;
+        ensure();
         return;
       }
       const action = button.dataset.arkAction;
+      if (action === "controls") {
+        controlsOpen = !controlsOpen;
+        ensure();
+        return;
+      }
       if (action === "previous") selectOperator(operatorIndex - 1, true);
       if (action === "next") selectOperator(operatorIndex + 1, true);
       if (action === "autoplay") {
@@ -231,8 +226,14 @@
     setText(".ark-operator-name", operator.name);
     setText(".ark-operator-role", operator.role);
     setText(".ark-quote", operator.quote);
+    setText(".ark-control-current", operator.name.split(" /")[0]);
     setText("[data-ark-action='autoplay']", autoplay ? "ROTATE ON" : "ROTATE OFF");
-    setText("[data-ark-action='mode']", modePreference === "auto" ? "AUTO MODE" : `${modePreference.toUpperCase()} MODE`);
+    setText("[data-ark-action='mode']", modePreference === "auto"
+      ? `AUTO · ${activeShellMode().toUpperCase()}` : `${modePreference.toUpperCase()} MODE`);
+    chrome.classList.toggle("ark-controls-open", controlsOpen);
+    const controlsToggle = chrome.querySelector("[data-ark-action='controls']");
+    controlsToggle?.setAttribute("aria-expanded", String(controlsOpen));
+    controlsToggle?.setAttribute("aria-label", `${controlsOpen ? "Close" : "Open"} operator controls for ${operator.name}`);
     chrome.querySelectorAll(".ark-operator-button").forEach((button, index) => {
       const active = index === operatorIndex;
       button.classList.toggle("is-active", active);
@@ -265,7 +266,7 @@
       style.id = STYLE_ID;
       (document.head || root).appendChild(style);
     }
-    if (style.dataset.dreamSkinVersion !== VERSION) {
+    if (style.dataset.dreamSkinVersion !== VERSION || style.textContent !== cssText) {
       style.textContent = cssText;
       style.dataset.dreamSkinVersion = VERSION;
     }
@@ -282,7 +283,7 @@
     shellMain.classList.toggle("ark-home-shell", Boolean(home));
 
     let chrome = document.getElementById(CHROME_ID);
-    if (!chrome || chrome.parentElement !== document.body) {
+    if (!chrome || chrome.parentElement !== document.body || !chrome.querySelector?.(".ark-control-toggle")) {
       chrome?.remove();
       chrome = document.createElement("div");
       chrome.id = CHROME_ID;

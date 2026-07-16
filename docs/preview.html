@@ -28,7 +28,7 @@
     .project-row { width: min(1040px, calc(100% - 42px)); padding: 12px; }
     .group\/project-selector { display: flex; gap: 8px; }
     .group\/project-selector button { min-height: 38px; padding: 0 12px; border: 1px solid; }
-    .composer-wrap { position: fixed; left: calc(248px + 7%); right: 7%; bottom: 76px; z-index: 5; }
+    .composer-wrap { position: fixed; left: calc(248px + 7%); right: 7%; bottom: 24px; z-index: 5; }
     .composer-surface-chrome { position: relative; min-height: 76px; padding: 18px 20px; }
     .composer-surface-chrome .ProseMirror { opacity: .72; }
     #codex-dream-skin-chrome { left: 248px; top: 0; width: calc(100% - 248px); height: 100%; }
@@ -80,6 +80,9 @@
     <div class="ark-status"><i></i><span>P.R.T.S. LINK ONLINE</span></div>
     <div class="ark-quote"></div>
     <div class="ark-scanline" aria-hidden="true"></div>
+    <button type="button" class="ark-control-toggle" data-action="controls" aria-expanded="false" aria-label="Open operator controls">
+      <small>OPERATOR</small><b class="ark-control-current"></b><i aria-hidden="true"></i>
+    </button>
     <div class="ark-operator-panel" aria-label="Arknights operator and appearance controls">
       <button type="button" class="ark-step" data-action="previous" aria-label="Previous operator">‹</button>
       <div class="ark-operator-rail" role="group" aria-label="Choose operator"></div>
@@ -128,6 +131,7 @@
       document.querySelector(".ark-operator-name").textContent = operator.name;
       document.querySelector(".ark-operator-role").textContent = operator.role;
       document.querySelector(".ark-quote").textContent = operator.quote;
+      document.querySelector(".ark-control-current").textContent = operator.name.split(" /")[0];
       document.querySelector("[data-action='autoplay']").textContent = autoplay ? "ROTATE ON" : "ROTATE OFF";
       document.querySelector("[data-action='mode']").textContent = `${mode.toUpperCase()} MODE`;
       document.querySelectorAll("[data-index]").forEach((button, buttonIndex) => {
@@ -137,7 +141,11 @@
     };
     const select = (next, manual = false) => {
       index = (next + theme.operators.length) % theme.operators.length;
-      if (manual) autoplay = false;
+      if (manual) {
+        autoplay = false;
+        document.getElementById("codex-dream-skin-chrome").classList.remove("ark-controls-open");
+        document.querySelector("[data-action='controls']").setAttribute("aria-expanded", "false");
+      }
       render();
     };
     fetch("../windows/assets/theme.json").then((response) => response.json()).then((data) => {
@@ -157,6 +165,11 @@
       document.querySelector("[data-action='next']").addEventListener("click", () => select(index + 1, true));
       document.querySelector("[data-action='autoplay']").addEventListener("click", () => { autoplay = !autoplay; render(); });
       document.querySelector("[data-action='mode']").addEventListener("click", () => { mode = mode === "dark" ? "light" : "dark"; render(); });
+      document.querySelector("[data-action='controls']").addEventListener("click", (event) => {
+        const chrome = document.getElementById("codex-dream-skin-chrome");
+        const open = chrome.classList.toggle("ark-controls-open");
+        event.currentTarget.setAttribute("aria-expanded", String(open));
+      });
       render();
       timer = setInterval(() => { if (autoplay) select(index + 1); }, 12000);
     });

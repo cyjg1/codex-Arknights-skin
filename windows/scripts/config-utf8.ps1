@@ -206,8 +206,19 @@ function Assert-DreamSkinDesktopShapeSupported {
   if ([regex]::IsMatch($Content, "(?m)^[\t ]*\[\[[\t ]*$desktopToken[\t ]*\]\]")) {
     throw 'Refusing to rewrite a config that represents desktop as an array of tables.'
   }
-  if ([regex]::IsMatch($Content, "(?m)^[\t ]*\[\[?[\t ]*$desktopToken[\t ]*\.")) {
-    throw 'Refusing to rewrite nested desktop tables; normalize them to a single [desktop] table first.'
+  if ([regex]::IsMatch($Content, "(?m)^[\t ]*\[\[[\t ]*$desktopToken[\t ]*\.")) {
+    throw 'Refusing to rewrite nested desktop arrays of tables.'
+  }
+
+  $chromeToken = Get-DreamSkinTomlKeyTokenPattern -Key 'appearanceLightChromeTheme'
+  $fontsToken = Get-DreamSkinTomlKeyTokenPattern -Key 'fonts'
+  $semanticToken = Get-DreamSkinTomlKeyTokenPattern -Key 'semanticColors'
+  $nestedDesktopPattern = "(?m)^[\t ]*\[[\t ]*$desktopToken[\t ]*\.[^\r\n\]]+\][\t ]*(?:#[^\r\n]*)?$"
+  $supportedNestedPattern = "^[\t ]*\[[\t ]*$desktopToken[\t ]*\.[\t ]*$chromeToken(?:[\t ]*\.[\t ]*(?:$fontsToken|$semanticToken))?[\t ]*\][\t ]*(?:#[^\r\n]*)?$"
+  foreach ($nestedDesktop in [regex]::Matches($Content, $nestedDesktopPattern)) {
+    if (-not [regex]::IsMatch($nestedDesktop.Value, $supportedNestedPattern)) {
+      throw 'Refusing to rewrite unsupported nested desktop tables; only the Codex chrome theme tables are supported.'
+    }
   }
 
   $firstTable = [regex]::Match($Content, '(?m)^[\t ]*\[\[?')
@@ -315,7 +326,11 @@ function Install-DreamSkinBaseTheme {
     $settings = [ordered]@{
       appearanceTheme = 'appearanceTheme = "light"'
       appearanceLightCodeThemeId = 'appearanceLightCodeThemeId = "codex"'
-      appearanceLightChromeTheme = 'appearanceLightChromeTheme = { accent = "#B65CFF", contrast = 64, fonts = { code = "Cascadia Code", ui = "Microsoft YaHei UI" }, ink = "#4A235F", opaqueWindows = true, semanticColors = { diffAdded = "#BCE8CF", diffRemoved = "#F7B8CE", skill = "#C47BFF" }, surface = "#FFF4FA" }'
+    }
+    $desktopToken = Get-DreamSkinTomlKeyTokenPattern -Key 'desktop'
+    $nestedChromePattern = "(?m)^[\t ]*\[[\t ]*$desktopToken[\t ]*\.[\t ]*$(Get-DreamSkinTomlKeyTokenPattern -Key 'appearanceLightChromeTheme')[\t ]*\]"
+    if (-not [regex]::IsMatch($content, $nestedChromePattern)) {
+      $settings.appearanceLightChromeTheme = 'appearanceLightChromeTheme = { accent = "#B65CFF", contrast = 64, fonts = { code = "Cascadia Code", ui = "Microsoft YaHei UI" }, ink = "#4A235F", opaqueWindows = true, semanticColors = { diffAdded = "#BCE8CF", diffRemoved = "#F7B8CE", skill = "#C47BFF" }, surface = "#FFF4FA" }'
     }
     foreach ($key in $settings.Keys) {
       $body = Set-DreamSkinSectionSetting -Body $body -Key $key -Line $settings[$key] -NewLine $newLine

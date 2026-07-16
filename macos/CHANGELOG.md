@@ -4,6 +4,9 @@
 
 - Bundled six operator themes: Amiya, Kal'tsit, Ch'en, Texas, Exusiai, and W.
 - Added manual operator selection, persistent automatic rotation, and Auto/Day/Night display controls.
+- Replaced the bottom operator rail with a compact upper-right control that stays collapsed by default.
+- Auto mode now follows local daytime hours, while wide task layouts reserve a dedicated right-side operator plane.
+- Fixed same-version hot reloads retaining stale CSS or control event handlers.
 - Added operator-specific palettes, codes, roles, taglines, and generated fan-theme artwork.
 - Kept single-image custom themes backward compatible with the new multi-operator payload.
 

@@ -26,13 +26,14 @@ Thank you to the original author and contributors. The upstream project is MIT-l
 
 ## Controls
 
+- Use the compact `OPERATOR` button in the upper-right corner to open the selector. It stays collapsed by default and never occupies the composer area.
 - Select an operator to switch the artwork, accent palette, code, role, and copy. Manual selection pauses rotation.
 - `ROTATE ON / OFF` controls the 12-second automatic carousel.
-- `AUTO / DAY / NIGHT MODE` follows Codex appearance or forces a light or dark shell.
+- `AUTO / DAY / NIGHT MODE` uses the light shell from 07:00 to 18:00 local time and the dark shell outside that window, or forces either shell manually.
 - Preferences are stored locally and restored on the next themed launch.
 - Reduced-motion preferences disable scan and entrance animations.
 
-Day mode uses a cool paper-white shell, dark text, and a lighter artwork treatment. Night mode uses a black-blue tactical terminal, light text, and stronger operator lighting. Native Codex navigation, tasks, project controls, and composer remain interactive in both modes.
+Day mode uses a cool paper-white shell, dark text, and a clear operator plane on the right. Night mode uses a black-blue tactical terminal, light text, and stronger operator lighting. On wide task windows, the conversation and composer align left together to reserve space for the operator; below 1120px they return to the native centered full-width layout. Native Codex navigation, tasks, project controls, and composer remain interactive in both modes.
 
 ## Install
 

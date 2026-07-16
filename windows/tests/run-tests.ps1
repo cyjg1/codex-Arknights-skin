@@ -85,6 +85,23 @@ try {
     throw 'A safe single-line array containing bracket text was changed or rejected.'
   }
 
+  $nestedChromePath = Join-Path $temporaryRoot 'config-nested-chrome.toml'
+  $nestedChromeBackup = Join-Path $temporaryRoot 'config-nested-chrome.before.toml'
+  $nestedChromeOriginal = "[desktop]`r`nlocaleOverride = `"zh-CN`"`r`nappearanceLightCodeThemeId = `"absolutely`"`r`n`r`n[desktop.appearanceLightChromeTheme]`r`naccent = `"#cc7d5e`"`r`nopaqueWindows = false`r`n`r`n[desktop.appearanceLightChromeTheme.fonts]`r`n`r`n[desktop.appearanceLightChromeTheme.semanticColors]`r`nskill = `"#cc7d5e`"`r`n"
+  [System.IO.File]::WriteAllText($nestedChromePath, $nestedChromeOriginal, $utf8NoBom)
+  Install-DreamSkinBaseTheme -ConfigPath $nestedChromePath -BackupPath $nestedChromeBackup
+  $nestedChromeInstalled = Read-DreamSkinUtf8File -Path $nestedChromePath
+  if ($nestedChromeInstalled -notmatch 'appearanceTheme = "light"' -or
+    $nestedChromeInstalled -notmatch 'appearanceLightCodeThemeId = "codex"' -or
+    $nestedChromeInstalled -notmatch 'accent = "#cc7d5e"' -or
+    $nestedChromeInstalled -match '(?m)^appearanceLightChromeTheme\s*=') {
+    throw 'Install did not preserve the supported nested Codex chrome theme representation.'
+  }
+  Restore-DreamSkinBaseTheme -ConfigPath $nestedChromePath -BackupPath $nestedChromeBackup
+  if ((Read-DreamSkinUtf8File -Path $nestedChromePath) -cne $nestedChromeOriginal) {
+    throw 'Restore did not preserve the nested Codex chrome theme representation exactly.'
+  }
+
   foreach ($unsupported in @(
     'desktop.appearanceTheme = "system"',
     'desktop = { appearanceTheme = "system" }',
