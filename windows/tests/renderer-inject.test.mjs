@@ -32,6 +32,7 @@ function createFixture({ shellPresent, staleSkin = false }) {
   const rootStyles = new Map(staleSkin ? [["--ark-art", "url(\"blob:stale\")"]] : []);
   const rootAttributes = new Map();
   const revokedUrls = [];
+  const sidebarChildren = [];
   let objectUrlIndex = 0;
   let hasShell = shellPresent;
 
@@ -72,6 +73,16 @@ function createFixture({ shellPresent, staleSkin = false }) {
       return { left: 290, top: 36, width: 990, height: 784 };
     },
   };
+  const shellSidebar = {
+    querySelector(selector) {
+      if (selector !== ".ark-sidebar-decor") return null;
+      return sidebarChildren.find((node) => node.className === "ark-sidebar-decor") ?? null;
+    },
+    appendChild(node) {
+      node.parentElement = shellSidebar;
+      sidebarChildren.push(node);
+    },
+  };
   const staleHome = { classList: makeClassList(new Set(["ark-home"])) };
   const staleShell = { classList: makeClassList(new Set(["ark-home-shell"])) };
 
@@ -88,7 +99,11 @@ function createFixture({ shellPresent, staleSkin = false }) {
     addEventListener() {},
     appendChild() {},
     contains() { return true; },
-    remove() { nodes.delete(this.id); },
+    remove() {
+      nodes.delete(this.id);
+      const sidebarIndex = sidebarChildren.indexOf(this);
+      if (sidebarIndex >= 0) sidebarChildren.splice(sidebarIndex, 1);
+    },
   });
   if (staleSkin) {
     const style = createElement();
@@ -107,10 +122,11 @@ function createFixture({ shellPresent, staleSkin = false }) {
     getElementById(id) { return nodes.get(id) ?? null; },
     querySelector(selector) {
       if (selector === "main.main-surface") return hasShell ? shellMain : null;
-      if (selector === "aside.app-shell-left-panel") return hasShell ? {} : null;
+      if (selector === "aside.app-shell-left-panel") return hasShell ? shellSidebar : null;
       return null;
     },
     querySelectorAll(selector) {
+      if (selector === ".ark-sidebar-decor") return sidebarChildren;
       if (!staleSkin) return [];
       if (selector === ".ark-home") return [staleHome];
       if (selector === ".ark-home-shell") return [staleShell];
@@ -143,6 +159,7 @@ function createFixture({ shellPresent, staleSkin = false }) {
     rootClasses,
     rootStyles,
     revokedUrls,
+    sidebarChildren,
     setShellPresent(value) { hasShell = value; },
   };
 }
@@ -155,14 +172,19 @@ assert.equal(main.rootClasses.has("codex-dream-skin"), true);
 assert.equal(main.rootStyles.get("--ark-art"), 'url("blob:fixture-1")');
 assert.equal(main.nodes.has("codex-dream-skin-style"), true);
 assert.equal(main.nodes.has("codex-dream-skin-chrome"), true);
+assert.equal(main.sidebarChildren.length, 1);
+assert.equal(main.sidebarChildren[0].className, "ark-sidebar-decor");
+assert.match(main.sidebarChildren[0].innerHTML, /RHODES ISLAND/);
 main.context.window.__CODEX_DREAM_SKIN_STATE__.selectOperator(1, true);
 assert.equal(main.context.window.__CODEX_DREAM_SKIN_STATE__.operator.id, "chen");
 assert.equal(main.context.window.__CODEX_DREAM_SKIN_STATE__.autoplay, false);
+assert.equal(main.sidebarChildren.length, 1);
 assert.equal(main.rootStyles.get("--ark-art"), 'url("blob:fixture-2")');
 assert.equal(main.context.window.__CODEX_DREAM_SKIN_STATE__.cleanup(), true);
 assert.equal(main.rootClasses.has("codex-dream-skin"), false);
 assert.equal(main.nodes.has("codex-dream-skin-style"), false);
 assert.equal(main.nodes.has("codex-dream-skin-chrome"), false);
+assert.equal(main.sidebarChildren.length, 0);
 assert.deepEqual(main.revokedUrls, ["blob:fixture-1", "blob:fixture-2"]);
 
 const auxiliary = createFixture({ shellPresent: false, staleSkin: true });
@@ -178,5 +200,6 @@ auxiliary.context.window.__CODEX_DREAM_SKIN_STATE__.ensure();
 assert.equal(auxiliary.rootClasses.has("codex-dream-skin"), true);
 assert.equal(auxiliary.nodes.has("codex-dream-skin-style"), true);
 assert.equal(auxiliary.nodes.has("codex-dream-skin-chrome"), true);
+assert.equal(auxiliary.sidebarChildren.length, 1);
 
 console.log("PASS: renderer themes the Codex shell and preserves transparent auxiliary windows.");

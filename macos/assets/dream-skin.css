@@ -37,8 +37,13 @@ html.codex-dream-skin body::before {
 }
 
 html.codex-dream-skin aside.app-shell-left-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden !important;
   color: var(--ark-text) !important;
   background:
+    repeating-linear-gradient(0deg, transparent 0 31px, color-mix(in srgb, var(--ark-accent) 5%, transparent) 31px 32px),
+    linear-gradient(90deg, transparent 0 88%, color-mix(in srgb, var(--ark-accent) 5%, transparent) 88% 88.4%, transparent 88.4%),
     linear-gradient(135deg, color-mix(in srgb, var(--ark-accent) 7%, transparent), transparent 34%),
     rgba(10, 14, 16, .975) !important;
   border: 0 !important;
@@ -46,6 +51,92 @@ html.codex-dream-skin aside.app-shell-left-panel {
   border-radius: 0 !important;
   box-shadow: 14px 0 38px rgba(0, 0, 0, .22) !important;
   backdrop-filter: none !important;
+}
+
+html.codex-dream-skin aside.app-shell-left-panel > :not(.ark-sidebar-decor) { z-index: 1; }
+
+.ark-sidebar-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  color: var(--ark-accent);
+}
+
+.ark-sidebar-emblem {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: 138px;
+  height: 126px;
+  opacity: .105;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background: currentColor;
+  filter: drop-shadow(0 0 22px color-mix(in srgb, var(--ark-accent) 44%, transparent));
+  transform: translate(-50%, -50%);
+}
+
+.ark-sidebar-emblem::before {
+  content: "";
+  position: absolute;
+  inset: 15px 19px 14px;
+  clip-path: inherit;
+  background: rgba(10, 14, 16, .98);
+}
+
+.ark-sidebar-emblem i {
+  position: absolute;
+  left: calc(50% - 2px);
+  top: 42px;
+  z-index: 1;
+  width: 4px;
+  height: 68px;
+  background: currentColor;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.ark-sidebar-rail {
+  position: absolute;
+  right: 12px;
+  top: 112px;
+  bottom: 74px;
+  width: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: color-mix(in srgb, var(--ark-accent) 62%, var(--ark-muted));
+  opacity: .5;
+}
+
+.ark-sidebar-rail b,
+.ark-sidebar-rail small {
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  font-family: Inter, "DIN Alternate", "Segoe UI", sans-serif;
+  text-transform: uppercase;
+}
+
+.ark-sidebar-rail b { font-size: 6px; line-height: 1; font-weight: 900; letter-spacing: .16em; }
+.ark-sidebar-rail small { font-size: 7px; line-height: 1; font-weight: 720; letter-spacing: .2em; }
+.ark-sidebar-rail i {
+  width: 1px;
+  min-height: 36px;
+  flex: 1 1 auto;
+  background: repeating-linear-gradient(180deg, currentColor 0 7px, transparent 7px 12px);
+}
+
+.ark-sidebar-pulse {
+  position: absolute;
+  right: 16px;
+  bottom: 62px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ark-accent);
+  box-shadow: 0 0 14px var(--ark-accent);
+  animation: ark-blink 2.4s ease-in-out infinite;
 }
 
 html.codex-dream-skin aside.app-shell-left-panel nav { background: transparent !important; }
@@ -670,10 +761,17 @@ html.codex-dream-skin[data-dream-shell="light"] body {
 
 html.codex-dream-skin[data-dream-shell="light"] aside.app-shell-left-panel {
   color: var(--ark-text) !important;
-  background: rgba(246, 248, 247, .98) !important;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(23,26,27,.025) 31px 32px),
+    linear-gradient(90deg, transparent 0 88%, color-mix(in srgb, var(--ark-accent) 6%, transparent) 88% 88.4%, transparent 88.4%),
+    rgba(246, 248, 247, .98) !important;
   border-right-color: rgba(23,26,27,.11) !important;
   box-shadow: 12px 0 32px rgba(20,30,32,.06) !important;
 }
+
+html.codex-dream-skin[data-dream-shell="light"] .ark-sidebar-emblem { opacity: .085; }
+html.codex-dream-skin[data-dream-shell="light"] .ark-sidebar-emblem::before { background: rgba(246,248,247,.99); }
+html.codex-dream-skin[data-dream-shell="light"] .ark-sidebar-rail { color: color-mix(in srgb, var(--ark-accent) 58%, #30383b); opacity: .42; }
 
 html.codex-dream-skin[data-dream-shell="light"] aside.app-shell-left-panel button,
 html.codex-dream-skin[data-dream-shell="light"] aside.app-shell-left-panel a,
@@ -874,7 +972,7 @@ html.codex-dream-skin[data-dream-shell="light"] main.main-surface:not(.ark-home-
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ark-brand, .ark-operator-panel, .ark-status i, .ark-scanline {
+  .ark-brand, .ark-operator-panel, .ark-status i, .ark-scanline, .ark-sidebar-pulse {
     animation: none !important;
     transition: none !important;
   }

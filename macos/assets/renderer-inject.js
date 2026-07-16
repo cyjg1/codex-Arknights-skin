@@ -99,6 +99,7 @@
     for (const name of THEME_VARIABLES) root?.style.removeProperty(name);
     document.querySelectorAll?.(".ark-home").forEach((node) => node.classList.remove("ark-home"));
     document.querySelectorAll?.(".ark-home-shell").forEach((node) => node.classList.remove("ark-home-shell"));
+    document.querySelectorAll?.(".ark-sidebar-decor").forEach((node) => node.remove());
     document.getElementById(STYLE_ID)?.remove();
     document.getElementById(CHROME_ID)?.remove();
   };
@@ -247,6 +248,23 @@
     );
   };
 
+  const ensureSidebarDecor = (sidebar) => {
+    document.querySelectorAll?.(".ark-sidebar-decor").forEach((node) => {
+      if (node.parentElement !== sidebar) node.remove();
+    });
+    let decor = sidebar.querySelector?.(".ark-sidebar-decor");
+    if (decor?.parentElement === sidebar) return decor;
+    decor = document.createElement("div");
+    decor.className = "ark-sidebar-decor";
+    decor.setAttribute("aria-hidden", "true");
+    decor.innerHTML = `
+      <span class="ark-sidebar-emblem"><i></i></span>
+      <span class="ark-sidebar-rail"><b>RI // 001</b><i></i><small>RHODES ISLAND · 罗德岛</small></span>
+      <span class="ark-sidebar-pulse"></span>`;
+    sidebar.appendChild?.(decor);
+    return decor;
+  };
+
   const ensure = () => {
     if (window[DISABLED_KEY]) return;
     const root = document.documentElement;
@@ -281,6 +299,7 @@
     });
     if (home) home.classList.add("ark-home");
     shellMain.classList.toggle("ark-home-shell", Boolean(home));
+    ensureSidebarDecor(shellSidebar);
 
     let chrome = document.getElementById(CHROME_ID);
     if (!chrome || chrome.parentElement !== document.body || !chrome.querySelector?.(".ark-control-toggle")) {

@@ -30,6 +30,7 @@ Thank you to the original author and contributors. The upstream project is MIT-l
 - Select an operator to switch the artwork, accent palette, code, role, and copy. Manual selection pauses rotation.
 - `ROTATE ON / OFF` controls the 12-second automatic carousel.
 - `AUTO / DAY / NIGHT MODE` uses the light shell from 07:00 to 18:00 local time and the dark shell outside that window, or forces either shell manually.
+- The sidebar carries a low-contrast Rhodes Island emblem, `RI // 001` landship rail, and status beacon that follow the active operator accent without intercepting input.
 - Preferences are stored locally and restored on the next themed launch.
 - Reduced-motion preferences disable scan and entrance animations.
 
