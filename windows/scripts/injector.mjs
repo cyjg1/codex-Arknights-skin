@@ -7,6 +7,8 @@ const root = path.resolve(here, "..");
 const SKIN_VERSION = "1.0.0";
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]", "::1"]);
 const BROWSER_ID_PATTERN = /^[A-Za-z0-9._-]{1,200}$/;
+const MAX_ART_BYTES = 16 * 1024 * 1024;
+const MAX_OPERATOR_COUNT = 12;
 
 class CdpIdentityMismatchError extends Error {}
 
@@ -267,15 +269,45 @@ async function connectBrowserIdentityAnchor(port, expectedBrowserId) {
 }
 
 async function loadPayload() {
-  const [css, template, art] = await Promise.all([
+  const [css, template, configText] = await Promise.all([
     fs.readFile(path.join(root, "assets", "dream-skin.css"), "utf8"),
     fs.readFile(path.join(root, "assets", "renderer-inject.js"), "utf8"),
-    fs.readFile(path.join(root, "assets", "dream-reference.png")),
+    fs.readFile(path.join(root, "assets", "theme.json"), "utf8"),
   ]);
-  const artDataUrl = `data:image/png;base64,${art.toString("base64")}`;
+  const theme = JSON.parse(configText);
+  if (theme.schemaVersion !== 1 || !Array.isArray(theme.operators) || !theme.operators.length) {
+    throw new Error("Windows theme.json must contain a non-empty schemaVersion 1 operators array");
+  }
+  if (theme.operators.length > MAX_OPERATOR_COUNT) {
+    throw new Error(`Theme supports at most ${MAX_OPERATOR_COUNT} operators`);
+  }
+  const imagePaths = theme.operators.map((operator) => {
+    if (typeof operator?.image !== "string" || path.basename(operator.image) !== operator.image) {
+      throw new Error("Theme images must stay inside the assets directory");
+    }
+    const extension = path.extname(operator.image).toLowerCase();
+    if (![".png", ".jpg", ".jpeg", ".webp"].includes(extension)) {
+      throw new Error(`Unsupported theme image format: ${extension || "missing"}`);
+    }
+    return path.join(root, "assets", operator.image);
+  });
+  const artBuffers = await Promise.all(imagePaths.map((imagePath) => fs.readFile(imagePath)));
+  for (const art of artBuffers) {
+    if (art.length < 1 || art.length > MAX_ART_BYTES) {
+      throw new Error(`Theme image must be a non-empty file no larger than ${MAX_ART_BYTES} bytes`);
+    }
+  }
+  const artDataUrls = artBuffers.map((art, index) => {
+    const extension = path.extname(imagePaths[index]).toLowerCase();
+    const mime = extension === ".jpg" || extension === ".jpeg" ? "image/jpeg"
+      : extension === ".webp" ? "image/webp" : "image/png";
+    return `data:${mime};base64,${art.toString("base64")}`;
+  });
   return template
-    .replace("__DREAM_CSS_JSON__", JSON.stringify(css))
-    .replace("__DREAM_ART_JSON__", JSON.stringify(artDataUrl));
+    .replace("__DREAM_SKIN_CSS_JSON__", JSON.stringify(css))
+    .replace("__DREAM_SKIN_ARTS_JSON__", JSON.stringify(artDataUrls))
+    .replace("__DREAM_SKIN_THEME_JSON__", JSON.stringify(theme))
+    .replace("__DREAM_SKIN_VERSION_JSON__", JSON.stringify(SKIN_VERSION));
 }
 
 async function probeSession(session) {
@@ -337,9 +369,10 @@ async function removeFromSession(session) {
     const state = window.__CODEX_DREAM_SKIN_STATE__;
     if (state?.cleanup) return state.cleanup();
     document.documentElement?.classList.remove('codex-dream-skin');
-    document.documentElement?.style.removeProperty('--dream-art');
-    document.querySelectorAll('.dream-home').forEach((node) => node.classList.remove('dream-home'));
-    document.querySelectorAll('.dream-home-shell').forEach((node) => node.classList.remove('dream-home-shell'));
+    document.documentElement?.style.removeProperty('--ark-art');
+    document.documentElement?.style.removeProperty('--dream-skin-art');
+    document.querySelectorAll('.ark-home').forEach((node) => node.classList.remove('ark-home'));
+    document.querySelectorAll('.ark-home-shell').forEach((node) => node.classList.remove('ark-home-shell'));
     document.getElementById('codex-dream-skin-style')?.remove();
     document.getElementById('codex-dream-skin-chrome')?.remove();
     delete window.__CODEX_DREAM_SKIN_STATE__;
@@ -350,9 +383,9 @@ async function removeFromSession(session) {
 async function verifyRemovedSession(session) {
   return session.evaluate(`(() =>
     !document.documentElement.classList.contains('codex-dream-skin') &&
-    !document.documentElement.style.getPropertyValue('--dream-art') &&
-    !document.querySelector('.dream-home') &&
-    !document.querySelector('.dream-home-shell') &&
+    !document.documentElement.style.getPropertyValue('--ark-art') &&
+    !document.querySelector('.ark-home') &&
+    !document.querySelector('.ark-home-shell') &&
     !document.getElementById('codex-dream-skin-style') &&
     !document.getElementById('codex-dream-skin-chrome') &&
     !window.__CODEX_DREAM_SKIN_STATE__
@@ -366,7 +399,7 @@ async function verifySession(session) {
       const r = node.getBoundingClientRect();
       return { x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width), height: Math.round(r.height) };
     };
-    const home = document.querySelector('.dream-home');
+    const home = document.querySelector('.ark-home');
     const suggestions = home?.querySelector('.group\\\\/home-suggestions') ?? null;
     const cards = suggestions ? [...suggestions.querySelectorAll('button')].map(box) : [];
     const result = {
@@ -623,7 +656,10 @@ if (options.mode === "self-test") {
   console.log(JSON.stringify({ pass: true, version: SKIN_VERSION, test: "loopback-cdp-validation" }));
 } else if (options.mode === "check-payload") {
   const payload = await loadPayload();
-  if (payload.includes("__DREAM_CSS_JSON__") || payload.includes("__DREAM_ART_JSON__")) {
+  if (payload.includes("__DREAM_SKIN_CSS_JSON__") ||
+      payload.includes("__DREAM_SKIN_ARTS_JSON__") ||
+      payload.includes("__DREAM_SKIN_THEME_JSON__") ||
+      payload.includes("__DREAM_SKIN_VERSION_JSON__")) {
     throw new Error("Payload placeholders were not fully replaced");
   }
   console.log(JSON.stringify({ pass: true, version: SKIN_VERSION, payloadBytes: Buffer.byteLength(payload) }));

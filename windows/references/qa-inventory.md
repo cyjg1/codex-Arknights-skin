@@ -2,8 +2,8 @@
 
 ## User-visible claims
 
-1. The home screen visibly matches the reference mood: one cropped pink-purple starry hero, Fiona portrait crop, signature/brand treatment, native Codex suggestion cards, polaroid, and skinned native composer.
-2. The sidebar is blush glass rather than merely changing the accent color.
+1. The home screen shows the active Arknights operator artwork, operator name/code/role, tactical brand treatment, native Codex suggestion cards, and skinned native composer.
+2. The sidebar and main surface visibly switch between the cool paper-white day shell and black-blue night shell rather than merely changing the accent color.
 3. All real Codex controls remain interactive; the skin is not a screenshot overlay.
 4. The skin survives route changes and renderer reloads while the injector daemon runs.
 5. The official Store package and `app.asar` remain unchanged.
@@ -16,6 +16,8 @@
 - Project selector: click the real project chip under the "选择项目" label and confirm the native project menu opens.
 - Sidebar: open a real task, then return to New Task.
 - Composer: type text, verify caret/readability, then clear it without sending.
+- Operator selector: choose all six operators and confirm artwork, name, code, role, tagline, and accent change together; manual selection pauses rotation.
+- Rotation and mode controls: re-enable automatic rotation, then cycle Auto/Day/Night and confirm the selected preference persists after renderer reinjection.
 - Reload: use CDP `Page.reload`, wait, and confirm the injection marker returns.
 - Pet overlay: open a desktop pet and confirm its auxiliary window stays transparent with no skin background or decoration layer behind it.
 - Restore/reapply cycle: remove live skin, verify marker absent, apply again, verify marker present.
@@ -26,9 +28,9 @@
 ## Visual checks
 
 - 1280x820 initial home: hero, four native cards, real project selector, and composer are all visible without horizontal scrolling.
-- Narrower window: accept Codex's native responsive reduction to two or three suggestion cards; no essential control is covered and the polaroid may intentionally hide.
+- Narrower window: accept Codex's native responsive reduction to two or three suggestion cards; the operator rail may scroll horizontally, but every control remains keyboard reachable.
 - Normal task: messages remain readable and composer does not overlap content.
-- Inspect the sidebar, header, hero edges, card labels, composer controls, scrollbar, ribbon, and bottom-right decoration.
+- Inspect the sidebar, header, hero edges, operator rail, mode/rotation controls, card labels, composer controls, scrollbar, and tactical decorations in both day and night modes.
 - Reject black/transparent sidebar artifacts, clipped cards, duplicated/disconnected project labels, rasterized native controls, weak contrast, or decorations intercepting clicks.
 
 ## Exploratory checks

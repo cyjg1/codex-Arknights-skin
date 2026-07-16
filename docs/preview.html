@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN" class="codex-dream-skin" data-dream-shell="dark" data-ark-mode-source="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codex Arknights Skin Preview</title>
+  <link rel="stylesheet" href="../windows/assets/dream-skin.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body { display: grid; grid-template-columns: 248px 1fr; padding-top: 0; }
+    button { font: inherit; }
+    .app-shell-left-panel { position: relative; height: 100vh; padding: 22px 14px; }
+    .app-shell-left-panel strong { display: block; margin: 4px 10px 24px; font-size: 14px; letter-spacing: .08em; }
+    .app-shell-left-panel nav { display: grid; gap: 7px; }
+    .app-shell-left-panel nav button { min-height: 44px; padding: 0 12px; border: 0; text-align: left; background: transparent; }
+    .main-surface { height: 100vh; min-width: 0; }
+    .app-header-tint { height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; }
+    [role="main"] { height: calc(100vh - 48px); overflow: auto; }
+    .ark-home > div:first-child { display: flex; flex-direction: column; align-items: center; }
+    .ark-home > div:first-child > div:first-child { position: relative; display: flex; justify-content: center; width: 100%; }
+    .ark-home > div:first-child > div:first-child > div:first-child > div:first-child { display: flex; }
+    .ark-home > div:first-child > div:first-child > div:first-child > div:nth-child(2) { position: absolute !important; }
+    .group\/home-suggestions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; width: 100%; }
+    .group\/home-suggestions button { display: flex; flex-direction: column; gap: 12px; }
+    .group\/home-suggestions span:first-child { display: flex; }
+    .group\/home-suggestions svg { width: 20px; }
+    .project-row { width: min(1040px, calc(100% - 42px)); padding: 12px; }
+    .group\/project-selector { display: flex; gap: 8px; }
+    .group\/project-selector button { min-height: 38px; padding: 0 12px; border: 1px solid; }
+    .composer-wrap { position: fixed; left: calc(248px + 7%); right: 7%; bottom: 76px; z-index: 5; }
+    .composer-surface-chrome { position: relative; min-height: 76px; padding: 18px 20px; }
+    .composer-surface-chrome .ProseMirror { opacity: .72; }
+    #codex-dream-skin-chrome { left: 248px; top: 0; width: calc(100% - 248px); height: 100%; }
+    @media (max-width: 920px) {
+      body { grid-template-columns: 190px 1fr; }
+      #codex-dream-skin-chrome { left: 190px; width: calc(100% - 190px); }
+      .composer-wrap { left: calc(190px + 4%); right: 4%; }
+      .group\/home-suggestions { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <aside class="app-shell-left-panel">
+    <strong>CODEX / RHODES ISLAND</strong>
+    <nav aria-label="Preview navigation">
+      <button aria-current="page">新任务 / NEW TASK</button>
+      <button>任务 / OPERATIONS</button>
+      <button>技能 / SKILLS</button>
+      <button>自动化 / AUTOMATIONS</button>
+    </nav>
+  </aside>
+  <main class="main-surface ark-home-shell">
+    <header class="app-header-tint"><span></span><span></span></header>
+    <div role="main" class="ark-home">
+      <div>
+        <div>
+          <div>
+            <div><div><div data-feature="game-source">选择项目 <button>codex-arknight-skin</button></div></div></div>
+            <div>
+              <div class="group/home-suggestions">
+                <button><span><span>01</span></span><span>审查当前更改并给出下一步</span></button>
+                <button><span><span>02</span></span><span>实现一个功能并运行测试</span></button>
+                <button><span><span>03</span></span><span>解释这个代码库的结构</span></button>
+                <button><span><span>04</span></span><span>修复失败的构建与检查</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="project-row">
+          <div class="horizontal-scroll-fade-mask"><div class="group/project-selector"><button>agent</button><button>codex-arknight-skin</button></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="composer-wrap"><div class="composer-surface-chrome"><div class="ProseMirror">向 Codex 发送消息</div></div></div>
+  <div id="codex-dream-skin-chrome" class="ark-home-shell">
+    <div class="ark-brand"><span class="ark-brand-mark" aria-hidden="true"><i></i></span><span><b>CODEX ARKNIGHTS SKIN</b><small>RHODES ISLAND / FIELD TERMINAL</small></span></div>
+    <div class="ark-telemetry" aria-live="polite"><span class="ark-operator-code"></span><b class="ark-operator-name"></b><small class="ark-operator-role"></small></div>
+    <div class="ark-status"><i></i><span>P.R.T.S. LINK ONLINE</span></div>
+    <div class="ark-quote"></div>
+    <div class="ark-scanline" aria-hidden="true"></div>
+    <div class="ark-operator-panel" aria-label="Arknights operator and appearance controls">
+      <button type="button" class="ark-step" data-action="previous" aria-label="Previous operator">‹</button>
+      <div class="ark-operator-rail" role="group" aria-label="Choose operator"></div>
+      <button type="button" class="ark-step" data-action="next" aria-label="Next operator">›</button>
+      <span class="ark-control-separator" aria-hidden="true"></span>
+      <button type="button" class="ark-state-button" data-action="autoplay">ROTATE ON</button>
+      <button type="button" class="ark-state-button" data-action="mode">NIGHT MODE</button>
+    </div>
+  </div>
+  <script>
+    const root = document.documentElement;
+    let theme;
+    let index = 0;
+    let autoplay = true;
+    let mode = "dark";
+    let timer;
+    const setVariable = (name, value) => root.style.setProperty(name, value);
+    const render = () => {
+      const operator = theme.operators[index];
+      const light = mode === "light";
+      const colors = operator.colors;
+      const structural = light
+        ? { bg: "#E9ECEC", panel: "#F8F9F8", panel2: "#DFE4E4", text: "#171A1B", muted: "#596164" }
+        : { bg: "#080B0D", panel: "#111619", panel2: "#171D21", text: "#F2F5F5", muted: "#9BA5A8" };
+      setVariable("--ark-bg", structural.bg);
+      setVariable("--ark-panel", structural.panel);
+      setVariable("--ark-panel-2", structural.panel2);
+      setVariable("--ark-text", structural.text);
+      setVariable("--ark-muted", structural.muted);
+      setVariable("--ark-accent", colors.accent);
+      setVariable("--ark-accent-alt", light ? colors.highlight : colors.accentAlt);
+      setVariable("--ark-secondary", colors.secondary);
+      setVariable("--ark-highlight", colors.highlight);
+      setVariable("--ark-line", colors.line);
+      setVariable("--ark-art", `url("/windows/assets/${operator.image}")`);
+      setVariable("--ark-name", JSON.stringify(operator.name));
+      setVariable("--ark-code", JSON.stringify(operator.code));
+      setVariable("--ark-role", JSON.stringify(operator.role));
+      setVariable("--ark-tagline", JSON.stringify(operator.tagline));
+      setVariable("--ark-quote", JSON.stringify(operator.quote));
+      setVariable("--dream-skin-project-prefix", JSON.stringify(theme.projectPrefix));
+      setVariable("--dream-skin-project-label", JSON.stringify(theme.projectLabel));
+      root.dataset.dreamShell = mode;
+      root.dataset.arkOperator = operator.id;
+      document.querySelector(".ark-operator-code").textContent = operator.code;
+      document.querySelector(".ark-operator-name").textContent = operator.name;
+      document.querySelector(".ark-operator-role").textContent = operator.role;
+      document.querySelector(".ark-quote").textContent = operator.quote;
+      document.querySelector("[data-action='autoplay']").textContent = autoplay ? "ROTATE ON" : "ROTATE OFF";
+      document.querySelector("[data-action='mode']").textContent = `${mode.toUpperCase()} MODE`;
+      document.querySelectorAll("[data-index]").forEach((button, buttonIndex) => {
+        button.classList.toggle("is-active", buttonIndex === index);
+        button.setAttribute("aria-pressed", String(buttonIndex === index));
+      });
+    };
+    const select = (next, manual = false) => {
+      index = (next + theme.operators.length) % theme.operators.length;
+      if (manual) autoplay = false;
+      render();
+    };
+    fetch("../windows/assets/theme.json").then((response) => response.json()).then((data) => {
+      theme = data;
+      const rail = document.querySelector(".ark-operator-rail");
+      theme.operators.forEach((operator, operatorIndex) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.index = String(operatorIndex);
+        button.className = "ark-operator-button";
+        button.textContent = operator.name.split(" /")[0].toUpperCase();
+        button.setAttribute("aria-label", `Select ${operator.name}`);
+        button.addEventListener("click", () => select(operatorIndex, true));
+        rail.appendChild(button);
+      });
+      document.querySelector("[data-action='previous']").addEventListener("click", () => select(index - 1, true));
+      document.querySelector("[data-action='next']").addEventListener("click", () => select(index + 1, true));
+      document.querySelector("[data-action='autoplay']").addEventListener("click", () => { autoplay = !autoplay; render(); });
+      document.querySelector("[data-action='mode']").addEventListener("click", () => { mode = mode === "dark" ? "light" : "dark"; render(); });
+      render();
+      timer = setInterval(() => { if (autoplay) select(index + 1); }, 12000);
+    });
+  </script>
+</body>
+</html>

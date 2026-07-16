@@ -1,131 +1,70 @@
-# Codex Dream Skin
+# Codex Arknights Skin
 
 <p align="center">
   <a href="./README.md">中文</a> · <strong>English</strong>
 </p>
 
 <p align="center">
-  <strong>Give Codex a face that breathes.</strong><br>
-  External themes for the Codex desktop app · Local CDP inject · No official package mutation
+  An Arknights-inspired Codex desktop theme that changes with the selected operator, time of day, and task context.<br>
+  Six operators · Manual selection · Auto rotation · Day/night modes · Windows / macOS
 </p>
 
-<p align="center">
-  One image, one mood · Code with atmosphere
-</p>
+## Built on Codex Dream Skin
 
-<p align="center">
-  Unofficial. Does not modify <code>.app</code> / <code>app.asar</code> / WindowsApps.
-</p>
+This project is developed from [Fei-Away/Codex-Dream-Skin](https://github.com/Fei-Away/Codex-Dream-Skin). It retains the upstream project's reversible local CDP injection, safe launch, verification, and restore mechanisms, then adds a new multi-operator Arknights visual system, operator controls, automatic rotation, and distinct day/night presentation.
 
-## Sponsors
+Thank you to the original author and contributors. The upstream project is MIT-licensed, and this repository preserves its license and attribution. This unofficial Arknights theme is maintained independently and is not the responsibility of the upstream authors.
 
-<p align="center">
-  <a href="https://passion8.cc/register?aff=TuPe">
-    <img src="docs/images/sponsor-passion8.png" alt="Passion8" height="72">
-  </a>
-</p>
+## Included operators
 
-<p align="center">
-  <strong>Smarter Connections · Passionate Creation</strong><br>
-  <sub>Connect AI · Power Creation</sub>
-</p>
+- Amiya — Rhodes Island Leader · Caster
+- Kal'tsit — Rhodes Island Medic · Command
+- Ch'en — Lungmen Guard · Swordmaster
+- Texas — Penguin Logistics · Vanguard
+- Exusiai — Penguin Logistics · Marksman
+- W — Sarkaz Mercenary · Artillery
 
-<p align="center">
-  Thanks to <a href="https://passion8.cc/register?aff=TuPe"><strong>passion8.cc</strong></a> for sponsoring this project.<br>
-  Full-power AI gateway: official models, no silent downgrades, no wrapper shells.<br>
-  One-line setup for Codex / Claude Code / Grok.
-</p>
+## Controls
 
-<p align="center">
-  <sub>
-    Theme install and API config stay separate — this project never rewrites your provider settings.
-  </sub>
-</p>
+- Select an operator to switch the artwork, accent palette, code, role, and copy. Manual selection pauses rotation.
+- `ROTATE ON / OFF` controls the 12-second automatic carousel.
+- `AUTO / DAY / NIGHT MODE` follows Codex appearance or forces a light or dark shell.
+- Preferences are stored locally and restored on the next themed launch.
+- Reduced-motion preferences disable scan and entrance animations.
 
-## Gallery
+Day mode uses a cool paper-white shell, dark text, and a lighter artwork treatment. Night mode uses a black-blue tactical terminal, light text, and stronger operator lighting. Native Codex navigation, tasks, project controls, and composer remain interactive in both modes.
 
-One image, one mood. Real theme previews you can ship:
+## Install
 
-<p align="center">
-  <img src="docs/images/gallery/skin-01.jpg" alt="Pink Custom" width="900"><br>
-  <sub>Pink Custom</sub>
-</p>
+### Windows
 
-<p align="center">
-  <img src="docs/images/gallery/skin-02.jpg" alt="God of Wealth" width="900"><br>
-  <sub>God of Wealth</sub>
-</p>
+Requires Node.js 22 or newer and the official Microsoft Store Codex desktop app.
 
-<p align="center">
-  <img src="docs/images/gallery/skin-03.jpg" alt="Red-White Sci-Fi" width="900"><br>
-  <sub>Red-White Sci-Fi</sub>
-</p>
+```powershell
+cd windows
+powershell -ExecutionPolicy Bypass -File scripts\install-dream-skin.ps1
+powershell -ExecutionPolicy Bypass -File scripts\start-dream-skin.ps1
+```
 
-<p align="center">
-  <img src="docs/images/gallery/skin-04.jpg" alt="Clear Custom" width="900"><br>
-  <sub>Clear Custom</sub>
-</p>
+Verify with `scripts\verify-dream-skin.ps1`. Restore with `scripts\restore-dream-skin.ps1 -Uninstall`.
 
-<p align="center">
-  <img src="docs/images/gallery/skin-05.jpg" alt="Inspiration" width="900"><br>
-  <sub>Inspiration</sub>
-</p>
+### macOS
 
-<p align="center">
-  <img src="docs/images/gallery/skin-06.jpg" alt="Purple Night" width="900"><br>
-  <sub>Purple Night</sub>
-</p>
+Open [`macos/`](./macos/) and run `Install Codex Dream Skin.command`, then `Start Codex Dream Skin.command`. Use `Restore Codex Dream Skin.command` to return to the official appearance.
 
-<p align="center">
-  <img src="docs/images/gallery/skin-07.jpg" alt="Hatsune Miku" width="900"><br>
-  <sub>Hatsune Miku</sub>
-</p>
+The macOS flow validates and reuses the signed Node.js runtime bundled with Codex. It does not modify the official app bundle, `app.asar`, or code signature.
 
-<p align="center">
-  <img src="docs/images/gallery/skin-08.jpg" alt="Stage Black-Gold" width="900"><br>
-  <sub>Stage Black-Gold</sub>
-</p>
+## Security boundaries
 
-## What it does
+- CDP is bound to loopback only (`127.0.0.1`).
+- The theme does not modify Codex binaries, signatures, API keys, or base URLs.
+- It does not place a fake full-window screenshot over Codex; native controls stay native and clickable.
+- Local CDP has no extra same-user authentication. Do not run untrusted local software while the theme is active, and use Restore when finished.
 
-- **Real UI** — Sidebar, cards, project picker, and input stay native. Not a fake full-window screenshot.
-- **Swappable art** — Drop in an image you like and it becomes your theme.
-- **Restorable** — One-click restore to the stock look.
-- **Safer path** — Local-loopback CDP inject only. No official binary or signature changes.
+## Attribution and disclaimer
 
-## Quick start
+This is an unofficial, non-commercial fan theme. It is not affiliated with or endorsed by Hypergryph, Yostar, OpenAI, or the upstream project authors.
 
-Platform scripts are ready — different plumbing, same goal: theme Codex.
+Arknights, its character names and designs, and related trademarks belong to their respective rights holders. The six bundled backgrounds are generated fan-theme artwork created for this repository; they are not official game illustrations and do not copy a specific official composition. See [`docs/ASSET_PROVENANCE.md`](./docs/ASSET_PROVENANCE.md).
 
-| Platform | Dir | Entry |
-|------|------|------|
-| Apple Silicon / Intel Mac | [`macos/`](./macos/) | Double-click `Install Codex Dream Skin.command` |
-| Windows | [`windows/`](./windows/) | `scripts/install-dream-skin.ps1` → `start-dream-skin.ps1` |
-
-More detail:
-
-- Mac: [`macos/README.md`](./macos/README.md)
-- Windows: [`windows/SKILL.md`](./windows/SKILL.md)
-- Paths: [`docs/platforms.md`](./docs/platforms.md)
-- Project notes: [`docs/PROJECT.md`](./docs/PROJECT.md)
-
-## Feedback & contributions
-
-- **Issues:** Use the [issue templates](./.github/ISSUE_TEMPLATE/) (bug / feature). Blank issues are disabled. Please try Verify / Restore self-checks before filing bugs.
-- **PRs:** Follow the [PR template](./.github/pull_request_template.md) — describe the change and tick the self-checks you actually ran (e.g. `macos/tests/run-tests.sh`, verify / restore).
-
-## Safety
-
-- CDP binds `127.0.0.1` only — avoid untrusted local processes while the theme runs.
-- Does not touch the official install directory or code signature.
-- **Never** rewrites API Key / Base URL; relay and theme stay separate.
-
-## License
-
-- See [`macos/LICENSE`](./macos/LICENSE) (MIT) and [`macos/NOTICE.md`](./macos/NOTICE.md)
-- Unofficial; Codex and related rights belong to their owners.
-- People / IP art in previews is illustrative only — clear rights before commercial redistribution.
-
----
-
-Star it, pick a look, and make Codex yours for today.
+The software code is available under the MIT License in [`LICENSE`](./LICENSE). That license grants no rights to third-party characters, trademarks, artwork, or applications.

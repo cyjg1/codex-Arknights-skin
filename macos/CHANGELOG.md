@@ -1,5 +1,12 @@
 # Changelog
 
+## Codex Arknights Skin — 2026-07-16
+
+- Bundled six operator themes: Amiya, Kal'tsit, Ch'en, Texas, Exusiai, and W.
+- Added manual operator selection, persistent automatic rotation, and Auto/Day/Night display controls.
+- Added operator-specific palettes, codes, roles, taglines, and generated fan-theme artwork.
+- Kept single-image custom themes backward compatible with the new multi-operator payload.
+
 ## 1.1.2 — 2026-07-16
 
 ### 修复

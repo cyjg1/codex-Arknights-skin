@@ -2,10 +2,10 @@
 
 ## Required user-visible behavior
 
-1. Home route shows one independent image banner, live native heading, two to four native suggestion cards, the real project selector, and native composer.
-2. Normal tasks show the selected image behind restrained gradients and translucent live content surfaces.
+1. Home route shows the selected Arknights operator banner, live native heading, native suggestion cards, the real project selector, and native composer.
+2. Normal tasks show the selected operator behind restrained day/night gradients and live content surfaces.
 3. Sidebar, navigation, messages, approvals, project selector, attachments, composer, menus, hover, focus, and keyboard input remain native and interactive.
-4. Decorative layers have `pointer-events: none`; no screenshot or raster UI is used as an overlay.
+4. Decorative layers have `pointer-events: none`; only the semantic operator/mode control rail accepts pointer input, and no screenshot or raster UI is used as an overlay.
 5. Route changes, renderer reloads, and ordinary refreshes reapply the current theme while the verified injector runs.
 6. Official application signature and `app.asar` remain unchanged.
 7. Restore removes live DOM/CSS, restores the two saved base-theme values, closes the CDP session after restart, and supports later reinstallation.
@@ -26,7 +26,10 @@
 ## Visual checks
 
 - Home at normal desktop size: banner crop is readable, text remains live, cards are not clipped, and composer does not overlap content.
-- Narrower window: quote/orbit decoration hides before covering essential controls.
+- Select each of the six bundled operators and verify artwork, palette, code, role, tagline, and quote update together.
+- Enable auto rotation and verify the operator advances; manually select an operator and verify rotation pauses.
+- Cycle Auto/Day/Night and verify light and dark contrast, native controls, and stored preference.
+- Narrower window: telemetry hides and the operator rail scrolls before covering essential controls.
 - Task route: background remains atmospheric, messages and output panels keep high contrast, and the composer remains reachable.
 - Selected image contains no fake interface controls or raster text intended to impersonate Codex.
 - Inspect sidebar selection, header, banner edges, cards, project label, composer buttons, scrollbars, focus outlines, dialogs, and menus.

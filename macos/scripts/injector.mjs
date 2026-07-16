@@ -7,6 +7,7 @@ const root = path.resolve(here, "..");
 const SKIN_VERSION = "1.1.2";
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const MAX_ART_BYTES = 16 * 1024 * 1024;
+const MAX_OPERATOR_COUNT = 12;
 
 function parseArgs(argv) {
   const options = {
@@ -284,6 +285,133 @@ async function loadPayload(themeDir) {
   return { imageBytes: art.length, payload, theme };
 }
 
+async function loadArknightsTheme(themeDir) {
+  const assetsRoot = themeDir ?? path.join(root, "assets");
+  const configPath = path.join(assetsRoot, "theme.json");
+  let raw;
+  try {
+    raw = JSON.parse(await fs.readFile(configPath, "utf8"));
+  } catch (error) {
+    if (themeDir && error.code === "ENOENT") {
+      throw new Error(`Explicit theme directory is missing theme.json: ${configPath}`);
+    }
+    throw error;
+  }
+  if (raw.schemaVersion !== 1) throw new Error(`${configPath} has an unsupported schema`);
+  if (Array.isArray(raw.operators) && raw.operators.length > MAX_OPERATOR_COUNT) {
+    throw new Error(`Theme supports at most ${MAX_OPERATOR_COUNT} operators`);
+  }
+  const text = (value, fallback, max) => typeof value === "string" && value.trim()
+    ? value.trim().slice(0, max) : fallback;
+  const color = (value, fallback) => {
+    if (typeof value !== "string") return fallback;
+    const normalized = value.trim();
+    return /^#[0-9a-f]{6}$/i.test(normalized) || /^rgba?\([0-9., %]+\)$/i.test(normalized)
+      ? normalized : fallback;
+  };
+  const imageName = (value) => {
+    if (typeof value !== "string" || !value.trim()) throw new Error("Theme image name is required");
+    const normalized = value.trim();
+    if (path.basename(normalized) !== normalized) {
+      throw new Error("Theme images must stay inside the theme directory");
+    }
+    const extension = path.extname(normalized).toLowerCase();
+    if (![".png", ".jpg", ".jpeg", ".webp"].includes(extension)) {
+      throw new Error(`Unsupported theme image format: ${extension || "missing"}`);
+    }
+    return normalized;
+  };
+  const colors = (value = {}, fallback = {}) => ({
+    background: color(value.background, fallback.background || "#080B0D"),
+    panel: color(value.panel, fallback.panel || "#111619"),
+    panelAlt: color(value.panelAlt, fallback.panelAlt || "#171D21"),
+    accent: color(value.accent, fallback.accent || "#48B6D4"),
+    accentAlt: color(value.accentAlt, fallback.accentAlt || "#CBEFFF"),
+    secondary: color(value.secondary, fallback.secondary || "#7697FF"),
+    highlight: color(value.highlight, fallback.highlight || "#FF634D"),
+    text: color(value.text, fallback.text || "#F2F5F5"),
+    muted: color(value.muted, fallback.muted || "#9BA5A8"),
+    line: color(value.line, fallback.line || "rgba(72, 182, 212, .34)"),
+  });
+  const fallbackImage = imageName(raw.image || raw.operators?.[0]?.image);
+  const themeColors = colors(raw.colors);
+  const operatorSources = Array.isArray(raw.operators) && raw.operators.length
+    ? raw.operators
+    : [{
+      id: raw.id,
+      name: raw.name,
+      role: raw.brandSubtitle,
+      tagline: raw.tagline,
+      quote: raw.quote,
+      image: fallbackImage,
+      colors: raw.colors,
+    }];
+  const seenIds = new Set();
+  const operators = operatorSources.map((operator, index) => {
+    const id = text(operator?.id, `operator-${index + 1}`, 80);
+    if (seenIds.has(id)) throw new Error(`Duplicate operator id: ${id}`);
+    seenIds.add(id);
+    return {
+      id,
+      name: text(operator?.name, `Operator ${index + 1}`, 80),
+      code: text(operator?.code, `RI${String(index + 1).padStart(2, "0")}`, 24),
+      role: text(operator?.role, "RHODES ISLAND OPERATOR", 100),
+      tagline: text(operator?.tagline, "Continue the operation.", 160),
+      quote: text(operator?.quote, "RHODES ISLAND", 100),
+      image: imageName(operator?.image || fallbackImage),
+      colors: colors(operator?.colors, themeColors),
+    };
+  });
+  const theme = {
+    schemaVersion: 1,
+    id: text(raw.id, "custom", 80),
+    name: text(raw.name, "Codex Arknights Skin", 80),
+    brandSubtitle: text(raw.brandSubtitle, "ARKNIGHTS / CODEX FIELD TERMINAL", 100),
+    tagline: text(raw.tagline, "Continue the operation.", 160),
+    projectPrefix: text(raw.projectPrefix, "Operation / ", 80),
+    projectLabel: text(raw.projectLabel, "Operation Directory", 80),
+    statusText: text(raw.statusText, "P.R.T.S. LINK ONLINE", 80),
+    quote: text(raw.quote, "RHODES ISLAND", 100),
+    image: fallbackImage,
+    carouselInterval: Math.max(6000, Math.min(60000, Number(raw.carouselInterval) || 12000)),
+    operators,
+    colors: themeColors,
+  };
+  const imagePaths = operators.map((operator) => path.join(assetsRoot, operator.image));
+  for (const imagePath of imagePaths) {
+    const stat = await fs.stat(imagePath);
+    if (!stat.isFile() || stat.size < 1 || stat.size > MAX_ART_BYTES) {
+      throw new Error(`Theme image must be a non-empty file no larger than ${MAX_ART_BYTES} bytes`);
+    }
+  }
+  return { imagePaths, theme };
+}
+
+async function loadArknightsPayload(themeDir) {
+  const [css, template, loaded] = await Promise.all([
+    fs.readFile(path.join(root, "assets", "dream-skin.css"), "utf8"),
+    fs.readFile(path.join(root, "assets", "renderer-inject.js"), "utf8"),
+    loadArknightsTheme(themeDir),
+  ]);
+  const artBuffers = await Promise.all(loaded.imagePaths.map((imagePath) => fs.readFile(imagePath)));
+  const artDataUrls = artBuffers.map((art, index) => {
+    const extension = path.extname(loaded.imagePaths[index]).toLowerCase();
+    const mime = extension === ".jpg" || extension === ".jpeg" ? "image/jpeg"
+      : extension === ".webp" ? "image/webp" : "image/png";
+    return `data:${mime};base64,${art.toString("base64")}`;
+  });
+  const payload = template
+    .replace("__DREAM_SKIN_CSS_JSON__", JSON.stringify(css))
+    .replace("__DREAM_SKIN_ARTS_JSON__", JSON.stringify(artDataUrls))
+    .replace("__DREAM_SKIN_THEME_JSON__", JSON.stringify(loaded.theme))
+    .replace("__DREAM_SKIN_VERSION_JSON__", JSON.stringify(SKIN_VERSION));
+  return {
+    imageBytes: artBuffers.reduce((total, art) => total + art.length, 0),
+    payload,
+    theme: loaded.theme,
+  };
+}
+
 async function applyToSession(session, payload) {
   return session.evaluate(payload);
 }
@@ -294,7 +422,10 @@ async function removeFromSession(session) {
     const state = window.__CODEX_DREAM_SKIN_STATE__;
     if (state?.cleanup) return state.cleanup();
     document.documentElement?.classList.remove('codex-dream-skin');
+    document.documentElement?.style.removeProperty('--ark-art');
     document.documentElement?.style.removeProperty('--dream-skin-art');
+    document.querySelectorAll('.ark-home').forEach((node) => node.classList.remove('ark-home'));
+    document.querySelectorAll('.ark-home-shell').forEach((node) => node.classList.remove('ark-home-shell'));
     document.getElementById('codex-dream-skin-style')?.remove();
     document.getElementById('codex-dream-skin-chrome')?.remove();
     delete window.__CODEX_DREAM_SKIN_STATE__;
@@ -327,7 +458,7 @@ async function verifySession(session) {
     const homeSignal = homeIndicator ?? document.querySelector('[data-feature="game-source"]') ??
       document.querySelector('.group\\\\/home-suggestions');
     const homeRoute = homeSignal?.closest('[role="main"]') ?? null;
-    const home = document.querySelector('[role="main"].dream-skin-home');
+    const home = document.querySelector('[role="main"].ark-home');
     const suggestions = home?.querySelector('.group\\\\/home-suggestions') ?? null;
     const cardBoxes = suggestions ? [...suggestions.querySelectorAll('button')].map(box) : [];
     const visibleCards = cardBoxes.filter((item) => item?.visible);
@@ -405,7 +536,7 @@ async function capture(session, outputPath) {
 
 async function runOneShot(options) {
   const connected = await connectCodexTargets(options.port, options.timeoutMs);
-  const loaded = (options.mode === "once" || options.reload) ? await loadPayload(options.themeDir) : null;
+  const loaded = (options.mode === "once" || options.reload) ? await loadArknightsPayload(options.themeDir) : null;
   const payload = loaded?.payload ?? null;
   const results = [];
   let screenshotCaptured = false;
@@ -441,7 +572,7 @@ async function runOneShot(options) {
 }
 
 async function runWatch(options) {
-  const { payload } = await loadPayload(options.themeDir);
+  const { payload } = await loadArknightsPayload(options.themeDir);
   const sessions = new Map();
   const rejected = new Set();
   let stopping = false;
@@ -504,7 +635,7 @@ async function runWatch(options) {
 try {
   const options = parseArgs(process.argv.slice(2));
   if (options.mode === "check") {
-    const loaded = await loadPayload(options.themeDir);
+    const loaded = await loadArknightsPayload(options.themeDir);
     console.log(JSON.stringify({
       pass: true,
       version: SKIN_VERSION,
